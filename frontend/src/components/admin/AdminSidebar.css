@@ -1,0 +1,416 @@
+
+.admin-sidebar {
+    position: fixed;
+
+    top: 0;
+    right: 0;
+
+    width: 270px;
+    height: 100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            #052b57 0%,
+            #0b2945 55%,
+            #071a2f 100%
+        );
+
+    color: white;
+
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
+
+    z-index: 1000;
+
+    direction: rtl;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.sidebar-logo {
+    height: 90px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 22px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.logo-icon {
+    width: 46px;
+    height: 46px;
+
+    border-radius: 12px;
+
+    background: #1683ff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+    font-weight: 800;
+
+    box-shadow:
+        0 5px 18px rgba(22, 131, 255, 0.35);
+}
+
+
+.logo-text h2 {
+    margin: 0;
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+
+.logo-text span {
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 10px;
+
+    color: #8da6bd;
+}
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+.sidebar-menu {
+    flex: 1;
+
+    padding: 20px 12px;
+
+    overflow-y: auto;
+}
+
+
+.menu-title {
+    padding: 0 12px 12px;
+
+    font-size: 11px;
+
+    color: #718ca4;
+
+    font-weight: 600;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+.sidebar-link {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    height: 47px;
+
+    margin-bottom: 5px;
+
+    padding: 0 14px;
+
+    border-radius: 10px;
+
+    color: #b7c8d8;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.07);
+
+    color: white;
+
+    transform: translateX(-2px);
+}
+
+
+.sidebar-link.active {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(22, 131, 255, 0.28),
+            rgba(22, 131, 255, 0.08)
+        );
+
+    color: white;
+
+    font-weight: 600;
+}
+
+
+/* Active indicator */
+
+.sidebar-link.active::before {
+    content: "";
+
+    position: absolute;
+
+    right: 0;
+
+    top: 9px;
+
+    width: 3px;
+
+    height: 29px;
+
+    border-radius: 5px;
+
+    background: #1683ff;
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+.sidebar-icon {
+    width: 25px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 18px;
+
+    flex-shrink: 0;
+}
+
+
+.sidebar-text {
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   BOTTOM
+========================================================= */
+
+.sidebar-bottom {
+    padding: 15px 12px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.08);
+}
+
+
+.sidebar-logout {
+    width: 100%;
+
+    height: 47px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #b7c8d8;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    padding: 0 14px;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    direction: rtl;
+
+    transition: 0.2s;
+}
+
+
+.sidebar-logout:hover {
+    background: rgba(255, 70, 70, 0.12);
+
+    color: #ff7777;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+.sidebar-menu::-webkit-scrollbar {
+    width: 4px;
+}
+
+
+.sidebar-menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .admin-sidebar {
+        width: 220px;
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .admin-sidebar {
+        width: 70px;
+    }
+
+
+    .logo-text,
+    .sidebar-text,
+    .menu-title,
+    .sidebar-logout span:last-child {
+        display: none;
+    }
+
+
+    .sidebar-logo {
+        justify-content: center;
+
+        padding: 0;
+    }
+
+
+    .sidebar-link {
+        justify-content: center;
+
+        padding: 0;
+    }
+
+
+    .sidebar-logout {
+        justify-content: center;
+
+        padding: 0;
+    }
+
+}
+.admin-main {
+    margin-right: 270px;
+    min-height: 100vh;
+    background: #f4f7fb;
+}
+
+@media (max-width: 700px) {
+    .admin-main {
+        margin-right: 70px;
+    }
+}
+
+
+.sidebar {
+    background: linear-gradient(180deg, #101b2a 0%, #07111d 100%);
+    border-left: 1px solid #263a50;
+    box-shadow: -3px 0 12px rgba(0, 0, 0, 0.22);
+}
+
+.sidebar-header {
+    border-bottom: 1px solid #263a50;
+    background: linear-gradient(180deg, #15263a 0%, #0d1827 100%);
+}
+
+.sidebar-header h2,
+.sidebar-header h3,
+.sidebar-header .logo-text {
+    color: #f5f8fc;
+}
+
+.sidebar-header p,
+.sidebar-header small {
+    color: #9badc0;
+}
+
+.sidebar nav,
+.sidebar .menu {
+    background: transparent;
+}
+
+.sidebar a,
+.sidebar .nav-link,
+.sidebar .menu-item {
+    margin: 4px 10px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    color: #b9c7d6;
+}
+
+.sidebar a:hover,
+.sidebar .nav-link:hover,
+.sidebar .menu-item:hover {
+    border-color: #315274;
+    background: #172d45;
+    color: #ffffff;
+}
+
+.sidebar a.active,
+.sidebar .nav-link.active,
+.sidebar .menu-item.active {
+    border-color: #2a659c;
+    border-right: 4px solid #64a9e8;
+    background: linear-gradient(90deg, #12395f, #174d80);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.sidebar .logout-btn,
+.sidebar .logout {
+    margin: 14px 10px;
+    border: 1px solid #263f59;
+    border-radius: 5px;
+    background: #172a3d;
+    color: #d8e3ee;
+}
+
+.sidebar .logout-btn:hover,
+.sidebar .logout:hover {
+    background: #263d54;
+    color: #ffffff;
+}

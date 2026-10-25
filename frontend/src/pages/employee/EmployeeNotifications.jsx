@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeeNotifications() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -16,7 +19,7 @@ export default function EmployeeNotifications() {
             setNotifications(data.results || data);
         } catch (error) {
             console.error("Notifications error:", error);
-            setError("دریافت اعلان‌ها با مشکل مواجه شد.");
+            setError(t('loadError'));
         } finally {
             setLoading(false);
         }
@@ -43,50 +46,41 @@ export default function EmployeeNotifications() {
             );
         } catch (error) {
             console.error("Notification update error:", error);
-            setError("تغییر وضعیت اعلان با مشکل مواجه شد.");
+            setError(t('saveError'));
         }
     };
-
-    const formatDate = (date) => {
-        if (!date) return "-";
-
-        return new Date(date).toLocaleString("fa-IR");
-    };
-
-    const unreadCount = notifications.filter((item) => !item.is_read).length;
+const unreadCount = notifications.filter((item) => !item.is_read).length;
 
     return (
-        <div className="employee-page" dir="rtl">
+        <div className="employee-page" dir={isRtl ? "rtl" : "ltr"}>
             <div className="page-header">
                 <div>
-                    <h1>اعلان‌ها</h1>
-                    <p>پیام‌ها و اطلاع‌رسانی‌های حساب شما</p>
+                    <h1>{t('notifications')}</h1>
+                    <p>{t('myNotificationsSubtitle')}</p>
                 </div>
 
                 <button
                     className="secondary-btn"
                     onClick={loadNotifications}
                     disabled={loading}
-                >
-                    ↻ بروزرسانی
-                </button>
+                >{t('refresh')}</button>
             </div>
 
             {error && <div className="error-message">{error}</div>}
 
             <div className="employee-card">
                 <div className="card-header">
-                    <h2>پیام‌های من</h2>
+                    <h2>{t('myMessages')}</h2>
                     <span>{unreadCount} خوانده‌نشده</span>
                 </div>
 
                 {loading ? (
                     <div className="empty-state">
-                        <p>در حال دریافت اعلان‌ها...</p>
+                        <p>{t('loadingData')}</p>
                     </div>
                 ) : notifications.length === 0 ? (
                     <div className="empty-state">
-                        <p>اعلانی برای شما وجود ندارد.</p>
+                        <p>{t('noNotifications')}</p>
                     </div>
                 ) : (
                     <div className="notification-list">

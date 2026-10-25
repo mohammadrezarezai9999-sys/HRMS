@@ -1,16 +1,19 @@
 import axios from 'axios';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/',
+  baseURL: API_BASE,
 });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('access');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
   return config;
 });
 
-// اگر توکن منقضی شده بود (401)، یک بار تلاش برای refresh
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -20,19 +23,20 @@ api.interceptors.response.use(
       const refresh = localStorage.getItem('refresh');
       if (refresh) {
         try {
-          const { data } = await axios.post(
-            (import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/') + '../token/refresh/',
-            { refresh }
-          );
+          // Token endpoints live under /api/token/ (same prefix as baseURL root)
+          const baseRoot = API_BASE.replace(/\/api\/?$/, '');
+          const { data } = await axios.post(`${baseRoot}/api/token/refresh/`, {
+            refresh,
+          });
           localStorage.setItem('access', data.access);
           original.headers.Authorization = `Bearer ${data.access}`;
           return api(original);
-        } catch (refreshError) {
-          localStorage.clear();
+        } catch {
+          localStorage.removeItem('access');
+          localStorage.removeItem('refresh');
           window.location.href = '/login';
         }
       } else {
-        localStorage.clear();
         window.location.href = '/login';
       }
     }

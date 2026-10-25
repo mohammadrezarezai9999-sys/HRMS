@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Departments() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [departments, setDepartments] = useState([]);
     const [employees, setEmployees] = useState([]);
@@ -44,9 +47,7 @@ export default function Departments() {
                 error
             );
 
-            setError(
-                "دریافت دپارتمان‌ها با مشکل مواجه شد."
-            );
+            setError(t('loadError'));
         }
     };
 
@@ -154,9 +155,7 @@ export default function Departments() {
                     data
                 );
 
-                setSuccess(
-                    "دپارتمان با موفقیت ویرایش شد."
-                );
+                setSuccess(t('successGeneric'));
 
             }
 
@@ -169,9 +168,7 @@ export default function Departments() {
                     data
                 );
 
-                setSuccess(
-                    "دپارتمان با موفقیت ایجاد شد."
-                );
+                setSuccess(t('successGeneric'));
 
             }
 
@@ -203,9 +200,7 @@ export default function Departments() {
 
             } else {
 
-                setError(
-                    "ذخیره دپارتمان با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
 
             }
 
@@ -255,7 +250,7 @@ export default function Departments() {
     const handleDelete = async (id) => {
 
         const confirmed = window.confirm(
-            "آیا مطمئن هستید که می‌خواهید این دپارتمان حذف شود؟"
+            t('confirmDelete')
         );
 
         if (!confirmed) {
@@ -272,9 +267,7 @@ export default function Departments() {
                 `departments/${id}/`
             );
 
-            setSuccess(
-                "دپارتمان با موفقیت حذف شد."
-            );
+            setSuccess(t('successGeneric'));
 
             await loadDepartments();
 
@@ -285,9 +278,7 @@ export default function Departments() {
                 error
             );
 
-            setError(
-                "حذف دپارتمان با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
 
         }
 
@@ -339,12 +330,10 @@ export default function Departments() {
 
                 <div>
 
-                    <h1>
-                        دپارتمان‌ها
-                    </h1>
+                    <h1>{t('departments')}</h1>
 
                     <p>
-                        مدیریت بخش‌های سازمان
+                        {t('departmentsSubtitle')}
                     </p>
 
                 </div>
@@ -373,8 +362,8 @@ export default function Departments() {
                 >
 
                     {showForm
-                        ? "بستن فرم"
-                        : "+ دپارتمان جدید"
+                        ? t('closeForm')
+                        : t('addDepartment')
                     }
 
                 </button>
@@ -423,8 +412,8 @@ export default function Departments() {
                     <h2>
 
                         {editingId
-                            ? "ویرایش دپارتمان"
-                            : "افزودن دپارتمان جدید"
+                            ? t('editDepartment')
+                            : t('addDepartment')
                         }
 
                     </h2>
@@ -442,7 +431,7 @@ export default function Departments() {
                             <div className="form-group">
 
                                 <label>
-                                    نام دپارتمان
+                                    {t('departmentName')}
                                 </label>
 
                                 <input
@@ -450,7 +439,7 @@ export default function Departments() {
                                     name="name"
                                     value={form.name}
                                     onChange={handleChange}
-                                    placeholder="مثلاً منابع انسانی"
+                                    placeholder={t('placeholderDepartment')}
                                     required
                                 />
 
@@ -462,7 +451,7 @@ export default function Departments() {
                             <div className="form-group">
 
                                 <label>
-                                    مدیر دپارتمان
+                                    {t('departmentManager')}
                                 </label>
 
                                 <select
@@ -472,7 +461,7 @@ export default function Departments() {
                                 >
 
                                     <option value="">
-                                        بدون مدیر
+                                        {t('noManager')}
                                     </option>
 
 
@@ -504,16 +493,14 @@ export default function Departments() {
                                 }}
                             >
 
-                                <label>
-                                    توضیحات
-                                </label>
+                                <label>{t('description')}</label>
 
                                 <textarea
                                     name="description"
                                     value={form.description}
                                     onChange={handleChange}
                                     rows="4"
-                                    placeholder="توضیحات مربوط به دپارتمان..."
+                                    placeholder={t('placeholderDeptDesc')}
                                 />
 
                             </div>
@@ -532,10 +519,10 @@ export default function Departments() {
                             >
 
                                 {loading
-                                    ? "در حال ذخیره..."
+                                    ? t('saving')
                                     : editingId
-                                        ? "ذخیره تغییرات"
-                                        : "ایجاد دپارتمان"
+                                        ? t('saveChanges')
+                                        : t('addDepartment')
                                 }
 
                             </button>
@@ -545,11 +532,7 @@ export default function Departments() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={resetForm}
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -577,20 +560,14 @@ export default function Departments() {
                             </th>
 
                             <th>
-                                نام دپارتمان
+                                {t('departmentName')}
                             </th>
 
-                            <th>
-                                توضیحات
-                            </th>
+                            <th>{t('description')}</th>
 
-                            <th>
-                                مدیر
-                            </th>
+                            <th>{t('manager')}</th>
 
-                            <th>
-                                عملیات
-                            </th>
+                            <th>{t('actions')}</th>
 
                         </tr>
 
@@ -611,8 +588,7 @@ export default function Departments() {
                                     }}
                                 >
 
-                                    هنوز دپارتمانی ثبت نشده است.
-
+                                    {t('noDepartments')}
                                 </td>
 
                             </tr>
@@ -663,7 +639,7 @@ export default function Departments() {
                                                     )
                                                 }
                                             >
-                                                ویرایش
+                                                {t('edit')}
                                             </button>
 
 
@@ -678,7 +654,7 @@ export default function Departments() {
                                                     marginRight: "8px"
                                                 }}
                                             >
-                                                حذف
+                                                {t('delete')}
                                             </button>
 
                                         </td>

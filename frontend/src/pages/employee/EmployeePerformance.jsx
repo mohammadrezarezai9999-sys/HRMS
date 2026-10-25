@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeePerformance() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
     const [performances, setPerformances] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -16,7 +19,7 @@ export default function EmployeePerformance() {
             setPerformances(data.results || data);
         } catch (error) {
             console.error("Performance error:", error);
-            setError("دریافت ارزیابی عملکرد با مشکل مواجه شد.");
+            setError(t('loadError'));
         } finally {
             setLoading(false);
         }
@@ -27,27 +30,25 @@ export default function EmployeePerformance() {
     }, []);
 
     return (
-        <div className="employee-page" dir="rtl">
+        <div className="employee-page" dir={isRtl ? "rtl" : "ltr"}>
             <div className="page-header">
                 <div>
-                    <h1>ارزیابی عملکرد</h1>
-                    <p>مشاهده نتایج ارزیابی‌های ثبت‌شده برای شما</p>
+                    <h1>{t('performance')}</h1>
+                    <p>{t('myPerformanceSubtitle')}</p>
                 </div>
 
                 <button
                     className="secondary-btn"
                     onClick={loadPerformances}
                     disabled={loading}
-                >
-                    ↻ بروزرسانی
-                </button>
+                >{t('refresh')}</button>
             </div>
 
             {error && <div className="error-message">{error}</div>}
 
             <div className="employee-card">
                 <div className="card-header">
-                    <h2>سوابق ارزیابی</h2>
+                    <h2>{t('reviewHistory')}</h2>
                     <span>{performances.length} مورد</span>
                 </div>
 
@@ -55,25 +56,23 @@ export default function EmployeePerformance() {
                     <table>
                         <thead>
                             <tr>
-                                <th>دوره ارزیابی</th>
-                                <th>امتیاز</th>
-                                <th>ارزیاب</th>
-                                <th>توضیحات</th>
-                                <th>تاریخ</th>
+                                <th>{t('reviewPeriod')}</th>
+                                <th>{t('score')}</th>
+                                <th>{t('reviewer')}</th>
+                                <th>{t('description')}</th>
+                                <th>{t('date')}</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="5" className="table-message">
-                                        در حال دریافت اطلاعات...
-                                    </td>
+                                    <td colSpan="5" className="table-message">{t('loadingData')}</td>
                                 </tr>
                             ) : performances.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="table-message">
-                                        ارزیابی عملکردی برای شما ثبت نشده است.
+                                        {t('noPerformance')}
                                     </td>
                                 </tr>
                             ) : (

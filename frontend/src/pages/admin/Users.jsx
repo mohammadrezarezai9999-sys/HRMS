@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Users() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // ============================================================
     // DATA
@@ -70,9 +73,7 @@ export default function Users() {
                 error.response?.data
             );
 
-            setError(
-                "دریافت کاربران با مشکل مواجه شد."
-            );
+            setError(t('loadError'));
 
         } finally {
 
@@ -145,9 +146,7 @@ export default function Users() {
                 form
             );
 
-            setSuccess(
-                "کاربر با موفقیت ایجاد شد."
-            );
+            setSuccess(t('successGeneric'));
 
             resetForm();
 
@@ -192,9 +191,7 @@ export default function Users() {
 
             } else {
 
-                setError(
-                    "ایجاد کاربر با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
 
             }
 
@@ -223,8 +220,8 @@ export default function Users() {
 
             setSuccess(
                 user.is_active
-                    ? "کاربر غیرفعال شد."
-                    : "کاربر فعال شد."
+                    ? t('userDeactivated')
+                    : t('userActivated')
             );
 
             loadUsers();
@@ -236,9 +233,7 @@ export default function Users() {
                 error
             );
 
-            setError(
-                "تغییر وضعیت کاربر با مشکل مواجه شد."
-            );
+            setError(t('saveError'));
 
         }
 
@@ -263,9 +258,7 @@ export default function Users() {
                 `users/${user.id}/`
             );
 
-            setSuccess(
-                "کاربر با موفقیت حذف شد."
-            );
+            setSuccess(t('successGeneric'));
 
             loadUsers();
 
@@ -276,9 +269,7 @@ export default function Users() {
                 error
             );
 
-            setError(
-                "حذف کاربر با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
 
         }
 
@@ -291,11 +282,11 @@ export default function Users() {
     const getRoleLabel = (role) => {
 
         if (role === "ADMIN") {
-            return "مدیر";
+            return t('roleAdmin');
         }
 
         if (role === "EMPLOYEE") {
-            return "کارمند";
+            return t('roleEmployee');
         }
 
         return role || "-";
@@ -309,7 +300,7 @@ export default function Users() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* ====================================================
@@ -320,12 +311,10 @@ export default function Users() {
 
                 <div>
 
-                    <h1>
-                        مدیریت کاربران
-                    </h1>
+                    <h1>{t('users')}</h1>
 
                     <p>
-                        مدیریت حساب‌های کاربری سیستم
+                        {t('usersSubtitle')}
                     </p>
 
                 </div>
@@ -345,8 +334,8 @@ export default function Users() {
                 >
 
                     {showForm
-                        ? "بستن فرم"
-                        : "+ کاربر جدید"
+                        ? t('closeForm')
+                        : t('addUser')
                     }
 
                 </button>
@@ -393,7 +382,7 @@ export default function Users() {
                 <div className="admin-card employee-form">
 
                     <h2>
-                        ایجاد کاربر جدید
+                        {t('addUser')}
                     </h2>
 
                     <form
@@ -406,9 +395,7 @@ export default function Users() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نام کاربری
-                                </label>
+                                <label>{t('username')}</label>
 
                                 <input
                                     type="text"
@@ -425,9 +412,7 @@ export default function Users() {
 
                             <div className="form-group">
 
-                                <label>
-                                    رمز عبور
-                                </label>
+                                <label>{t('password')}</label>
 
                                 <input
                                     type="password"
@@ -439,7 +424,7 @@ export default function Users() {
                                 />
 
                                 <small>
-                                    حداقل ۸ کاراکتر
+                                    {t('minPassword')}
                                 </small>
 
                             </div>
@@ -449,9 +434,7 @@ export default function Users() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نام
-                                </label>
+                                <label>{t('name')}</label>
 
                                 <input
                                     type="text"
@@ -467,9 +450,7 @@ export default function Users() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نام خانوادگی
-                                </label>
+                                <label>{t('lastName')}</label>
 
                                 <input
                                     type="text"
@@ -485,9 +466,7 @@ export default function Users() {
 
                             <div className="form-group">
 
-                                <label>
-                                    ایمیل
-                                </label>
+                                <label>{t('email')}</label>
 
                                 <input
                                     type="email"
@@ -503,9 +482,7 @@ export default function Users() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نقش
-                                </label>
+                                <label>{t('role')}</label>
 
                                 <select
                                     name="role"
@@ -513,13 +490,9 @@ export default function Users() {
                                     onChange={handleChange}
                                 >
 
-                                    <option value="EMPLOYEE">
-                                        کارمند
-                                    </option>
+                                    <option value="EMPLOYEE">{t('roleEmployee')}</option>
 
-                                    <option value="ADMIN">
-                                        مدیر
-                                    </option>
+                                    <option value="ADMIN">{t('roleAdmin')}</option>
 
                                 </select>
 
@@ -539,8 +512,8 @@ export default function Users() {
                             >
 
                                 {loading
-                                    ? "در حال ذخیره..."
-                                    : "ایجاد کاربر"
+                                    ? t('saving')
+                                    : t('addUser')
                                 }
 
                             </button>
@@ -560,8 +533,7 @@ export default function Users() {
                                 }}
                             >
 
-                                انصراف
-
+                                {t('cancel')}
                             </button>
 
                         </div>
@@ -582,7 +554,7 @@ export default function Users() {
                 <div className="kpi">
 
                     <span>
-                        کل کاربران
+                        {t('totalUsers')}
                     </span>
 
                     <b>
@@ -595,7 +567,7 @@ export default function Users() {
                 <div className="kpi">
 
                     <span>
-                        مدیران
+                        {t('admins')}
                     </span>
 
                     <b>
@@ -612,9 +584,7 @@ export default function Users() {
 
                 <div className="kpi">
 
-                    <span>
-                        کارمندان
-                    </span>
+                    <span>{t('employees')}</span>
 
                     <b>
                         {
@@ -631,7 +601,7 @@ export default function Users() {
                 <div className="kpi">
 
                     <span>
-                        کاربران فعال
+                        {t('activeUsers')}
                     </span>
 
                     <b>
@@ -659,11 +629,11 @@ export default function Users() {
                     <div>
 
                         <h2>
-                            کاربران سیستم
+                            {t('systemUsers')}
                         </h2>
 
                         <p>
-                            تعداد کاربران:
+                            {t('usersCount')}
                             {" "}
                             <strong>
                                 {users.length}
@@ -679,8 +649,8 @@ export default function Users() {
                     >
 
                         {loadingUsers
-                            ? "در حال دریافت..."
-                            : "↻ بروزرسانی"
+                            ? t('loadingData')
+                            : t('refresh')
                         }
 
                     </button>
@@ -697,36 +667,22 @@ export default function Users() {
                             <tr>
 
                                 <th>
-                                    شناسه
+                                    {t('id')}
                                 </th>
 
-                                <th>
-                                    نام کاربری
-                                </th>
+                                <th>{t('username')}</th>
 
-                                <th>
-                                    نام
-                                </th>
+                                <th>{t('name')}</th>
 
-                                <th>
-                                    نام خانوادگی
-                                </th>
+                                <th>{t('lastName')}</th>
 
-                                <th>
-                                    ایمیل
-                                </th>
+                                <th>{t('email')}</th>
 
-                                <th>
-                                    نقش
-                                </th>
+                                <th>{t('role')}</th>
 
-                                <th>
-                                    وضعیت
-                                </th>
+                                <th>{t('status')}</th>
 
-                                <th>
-                                    عملیات
-                                </th>
+                                <th>{t('actions')}</th>
 
                             </tr>
 
@@ -747,8 +703,7 @@ export default function Users() {
                                         }}
                                     >
 
-                                        در حال دریافت کاربران...
-
+                                        {t('loadingData')}
                                     </td>
 
                                 </tr>
@@ -765,8 +720,7 @@ export default function Users() {
                                         }}
                                     >
 
-                                        کاربری وجود ندارد.
-
+                                        {t('noUsers')}
                                     </td>
 
                                 </tr>
@@ -819,17 +773,13 @@ export default function Users() {
 
                                                 <span
                                                     className="status-badge"
-                                                >
-                                                    فعال
-                                                </span>
+                                                >{t('active')}</span>
 
                                             ) : (
 
                                                 <span
                                                     className="status-badge pending"
-                                                >
-                                                    غیرفعال
-                                                </span>
+                                                >{t('inactive')}</span>
 
                                             )}
 
@@ -855,8 +805,8 @@ export default function Users() {
                                                 >
 
                                                     {user.is_active
-                                                        ? "غیرفعال کردن"
-                                                        : "فعال کردن"
+                                                        ? t('deactivate')
+                                                        : t('activate')
                                                     }
 
                                                 </button>
@@ -871,8 +821,7 @@ export default function Users() {
                                                     }
                                                 >
 
-                                                    حذف
-
+                                                    {t('delete')}
                                                 </button>
 
                                             </div>

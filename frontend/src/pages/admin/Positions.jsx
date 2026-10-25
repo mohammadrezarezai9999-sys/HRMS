@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Positions() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [positions, setPositions] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -45,9 +48,7 @@ export default function Positions() {
 
             console.error(error);
 
-            setError(
-                "دریافت اطلاعات با مشکل مواجه شد."
-            );
+            setError(t('errorGeneric'));
 
         }
     };
@@ -139,9 +140,7 @@ export default function Positions() {
                     data
                 );
 
-                setSuccess(
-                    "سمت با موفقیت ویرایش شد."
-                );
+                setSuccess(t('successGeneric'));
 
             } else {
 
@@ -150,9 +149,7 @@ export default function Positions() {
                     data
                 );
 
-                setSuccess(
-                    "سمت با موفقیت ایجاد شد."
-                );
+                setSuccess(t('successGeneric'));
 
             }
 
@@ -167,7 +164,7 @@ export default function Positions() {
             setError(
                 JSON.stringify(
                     error.response?.data ||
-                    "خطا در ذخیره سمت"
+                    t('saveError')
                 )
             );
 
@@ -183,7 +180,7 @@ export default function Positions() {
     const handleDelete = async (id) => {
 
         if (!window.confirm(
-            "آیا از حذف این سمت مطمئن هستید؟"
+            t('confirmDelete')
         )) {
             return;
         }
@@ -194,9 +191,7 @@ export default function Positions() {
                 `positions/${id}/`
             );
 
-            setSuccess(
-                "سمت حذف شد."
-            );
+            setSuccess(t('successGeneric'));
 
             await loadData();
 
@@ -204,9 +199,7 @@ export default function Positions() {
 
             console.error(error);
 
-            setError(
-                "حذف سمت با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
 
         }
 
@@ -217,17 +210,17 @@ export default function Positions() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             <div className="page-header">
 
                 <div>
 
-                    <h1>سمت‌ها</h1>
+                    <h1>{t('positions')}</h1>
 
                     <p>
-                        مدیریت سمت‌های سازمان
+                        {t('positionsSubtitle')}
                     </p>
 
                 </div>
@@ -235,9 +228,7 @@ export default function Positions() {
                 <button
                     className="primary-btn"
                     onClick={openCreate}
-                >
-                    + سمت جدید
-                </button>
+                >{t('addPosition')}</button>
 
             </div>
 
@@ -262,8 +253,8 @@ export default function Positions() {
 
                     <h2>
                         {editingId
-                            ? "ویرایش سمت"
-                            : "ایجاد سمت جدید"
+                            ? t('editPosition')
+                            : t('addPosition')
                         }
                     </h2>
 
@@ -274,7 +265,7 @@ export default function Positions() {
                             <div className="form-group">
 
                                 <label>
-                                    عنوان سمت
+                                    {t('positionTitle')}
                                 </label>
 
                                 <input
@@ -291,9 +282,7 @@ export default function Positions() {
 
                             <div className="form-group">
 
-                                <label>
-                                    دپارتمان
-                                </label>
+                                <label>{t('department')}</label>
 
                                 <select
                                     name="department"
@@ -302,9 +291,7 @@ export default function Positions() {
                                     required
                                 >
 
-                                    <option value="">
-                                        انتخاب دپارتمان
-                                    </option>
+                                    <option value="">{t('selectDepartment')}</option>
 
                                     {departments.map(
                                         department => (
@@ -327,7 +314,7 @@ export default function Positions() {
                             <div className="form-group">
 
                                 <label>
-                                    معاش پایه
+                                    {t('baseSalary')}
                                 </label>
 
                                 <input
@@ -352,8 +339,8 @@ export default function Positions() {
                                 disabled={loading}
                             >
                                 {loading
-                                    ? "در حال ذخیره..."
-                                    : "ذخیره"
+                                    ? t('saving')
+                                    : t('save')
                                 }
                             </button>
 
@@ -361,9 +348,7 @@ export default function Positions() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={closeForm}
-                            >
-                                انصراف
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -383,10 +368,10 @@ export default function Positions() {
                         <tr>
 
                             <th>ID</th>
-                            <th>عنوان</th>
-                            <th>دپارتمان</th>
-                            <th>معاش پایه</th>
-                            <th>عملیات</th>
+                            <th>{t('title')}</th>
+                            <th>{t('department')}</th>
+                            <th>{t('baseSalary')}</th>
+                            <th>{t('actions')}</th>
 
                         </tr>
 
@@ -405,7 +390,7 @@ export default function Positions() {
                                         padding: "30px"
                                     }}
                                 >
-                                    هنوز سمتی ایجاد نشده است.
+                                    {t('noPositions')}
                                 </td>
 
                             </tr>
@@ -456,7 +441,7 @@ export default function Positions() {
                                                     )
                                                 }
                                             >
-                                                ویرایش
+                                                {t('edit')}
                                             </button>
 
                                             <button
@@ -467,7 +452,7 @@ export default function Positions() {
                                                     )
                                                 }
                                             >
-                                                حذف
+                                                {t('delete')}
                                             </button>
 
                                         </td>

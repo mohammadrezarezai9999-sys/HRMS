@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Performance() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // ============================================================
     // DATA
@@ -56,9 +59,7 @@ export default function Performance() {
                 error
             );
 
-            setError(
-                "دریافت ارزیابی‌های عملکرد با مشکل مواجه شد."
-            );
+            setError(t('loadError'));
         }
     };
 
@@ -86,9 +87,7 @@ export default function Performance() {
                 error
             );
 
-            setError(
-                "دریافت لیست کارمندان با مشکل مواجه شد."
-            );
+            setError(t('employeesLoadError'));
 
         } finally {
 
@@ -175,9 +174,7 @@ export default function Performance() {
 
         if (!form.employee) {
 
-            setError(
-                "لطفاً کارمند را انتخاب کنید."
-            );
+            setError(t('selectEmployeeRequired'));
 
             setLoading(false);
 
@@ -186,9 +183,7 @@ export default function Performance() {
 
         if (!form.period.trim()) {
 
-            setError(
-                "لطفاً دوره ارزیابی را وارد کنید."
-            );
+            setError(t('periodRequired'));
 
             setLoading(false);
 
@@ -201,9 +196,7 @@ export default function Performance() {
             Number(form.score) > 100
         ) {
 
-            setError(
-                "امتیاز باید بین ۰ تا ۱۰۰ باشد."
-            );
+            setError(t('scoreInvalid'));
 
             setLoading(false);
 
@@ -233,9 +226,7 @@ export default function Performance() {
             // SUCCESS
             // ----------------------------------------------------
 
-            setSuccess(
-                "ارزیابی عملکرد با موفقیت ثبت شد."
-            );
+            setSuccess(t('successGeneric'));
 
             // ----------------------------------------------------
             // RESET FORM
@@ -301,9 +292,7 @@ export default function Performance() {
 
             } else {
 
-                setError(
-                    "ثبت ارزیابی با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
             }
 
         } finally {
@@ -321,7 +310,7 @@ export default function Performance() {
 
         const confirmed =
             window.confirm(
-                "آیا از حذف این ارزیابی مطمئن هستید؟"
+                t('confirmDelete')
             );
 
         if (!confirmed) {
@@ -334,9 +323,7 @@ export default function Performance() {
                 `performance/${id}/`
             );
 
-            setSuccess(
-                "ارزیابی با موفقیت حذف شد."
-            );
+            setSuccess(t('successGeneric'));
 
             loadReviews();
 
@@ -347,9 +334,7 @@ export default function Performance() {
                 error
             );
 
-            setError(
-                "حذف ارزیابی با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
         }
     };
 
@@ -362,18 +347,18 @@ export default function Performance() {
         const value = Number(score);
 
         if (value >= 90) {
-            return "عالی";
+            return t('gradeExcellent');
         }
 
         if (value >= 75) {
-            return "خوب";
+            return t('gradeGood');
         }
 
         if (value >= 60) {
-            return "متوسط";
+            return t('gradeAverage');
         }
 
-        return "ضعیف";
+        return t('gradePoor');
     };
 
     // ============================================================
@@ -433,7 +418,7 @@ export default function Performance() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* ====================================================
@@ -444,12 +429,10 @@ export default function Performance() {
 
                 <div>
 
-                    <h1>
-                        ارزیابی عملکرد
-                    </h1>
+                    <h1>{t('performance')}</h1>
 
                     <p>
-                        مدیریت و ثبت ارزیابی عملکرد کارمندان
+                        {t('performanceSubtitle')}
                     </p>
 
                 </div>
@@ -458,7 +441,7 @@ export default function Performance() {
                     className="primary-btn"
                     onClick={openForm}
                 >
-                    + ارزیابی جدید
+                    {t('addPerformance')}
                 </button>
 
             </div>
@@ -507,11 +490,11 @@ export default function Performance() {
                         <div>
 
                             <h2>
-                                ثبت ارزیابی جدید
+                                {t('addPerformance')}
                             </h2>
 
                             <p>
-                                اطلاعات ارزیابی عملکرد کارمند را وارد کنید.
+                                {t('performanceFormHint')}
                             </p>
 
                         </div>
@@ -531,9 +514,7 @@ export default function Performance() {
 
                             <div className="form-group">
 
-                                <label>
-                                    کارمند
-                                </label>
+                                <label>{t('employee')}</label>
 
                                 <select
                                     name="employee"
@@ -542,14 +523,12 @@ export default function Performance() {
                                     required
                                 >
 
-                                    <option value="">
-                                        انتخاب کارمند
-                                    </option>
+                                    <option value="">{t('selectEmployee')}</option>
 
                                     {loadingEmployees ? (
 
                                         <option disabled>
-                                            در حال دریافت کارمندان...
+                                            {t('loadingData')}
                                         </option>
 
                                     ) : (
@@ -582,7 +561,7 @@ export default function Performance() {
                             <div className="form-group">
 
                                 <label>
-                                    دوره ارزیابی
+                                    {t('reviewPeriod')}
                                 </label>
 
                                 <input
@@ -590,7 +569,7 @@ export default function Performance() {
                                     name="period"
                                     value={form.period}
                                     onChange={handleChange}
-                                    placeholder="مثلاً 1405-نیمه اول"
+                                    placeholder={t('periodPlaceholder')}
                                     required
                                 />
 
@@ -603,9 +582,7 @@ export default function Performance() {
 
                             <div className="form-group">
 
-                                <label>
-                                    امتیاز
-                                </label>
+                                <label>{t('score')}</label>
 
                                 <input
                                     type="number"
@@ -615,12 +592,12 @@ export default function Performance() {
                                     min="0"
                                     max="100"
                                     step="0.01"
-                                    placeholder="0 تا 100"
+                                    placeholder={t('scoreHint')}
                                     required
                                 />
 
                                 <small>
-                                    امتیاز باید بین ۰ تا ۱۰۰ باشد.
+                                    {t('scoreInvalid')}
                                 </small>
 
                             </div>
@@ -637,16 +614,14 @@ export default function Performance() {
                                 }}
                             >
 
-                                <label>
-                                    توضیحات
-                                </label>
+                                <label>{t('description')}</label>
 
                                 <textarea
                                     name="comments"
                                     value={form.comments}
                                     onChange={handleChange}
                                     rows="5"
-                                    placeholder="توضیحات مربوط به عملکرد کارمند..."
+                                    placeholder={t('placeholderPerformance')}
                                 />
 
                             </div>
@@ -667,8 +642,8 @@ export default function Performance() {
                             >
 
                                 {loading
-                                    ? "در حال ذخیره..."
-                                    : "ثبت ارزیابی"
+                                    ? t('saving')
+                                    : t('addPerformance')
                                 }
 
                             </button>
@@ -678,11 +653,7 @@ export default function Performance() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={closeForm}
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -704,11 +675,11 @@ export default function Performance() {
                     <div>
 
                         <h2>
-                            ارزیابی‌های ثبت‌شده
+                            {t('reviewsList')}
                         </h2>
 
                         <p>
-                            تعداد ارزیابی‌ها:
+                            {t('reviewsCount')}
                             {" "}
                             <strong>
                                 {reviews.length}
@@ -728,33 +699,23 @@ export default function Performance() {
 
                             <tr>
 
-                                <th>
-                                    کارمند
-                                </th>
+                                <th>{t('employee')}</th>
 
                                 <th>
-                                    ارزیاب
+                                    {t('reviewer')}
                                 </th>
 
-                                <th>
-                                    دوره
-                                </th>
+                                <th>{t('period')}</th>
+
+                                <th>{t('score')}</th>
 
                                 <th>
-                                    امتیاز
+                                    {t('result')}
                                 </th>
 
-                                <th>
-                                    نتیجه
-                                </th>
+                                <th>{t('description')}</th>
 
-                                <th>
-                                    توضیحات
-                                </th>
-
-                                <th>
-                                    عملیات
-                                </th>
+                                <th>{t('actions')}</th>
 
                             </tr>
 
@@ -775,8 +736,7 @@ export default function Performance() {
                                         }}
                                     >
 
-                                        هنوز هیچ ارزیابی ثبت نشده است.
-
+                                        {t('noPerformance')}
                                     </td>
 
                                 </tr>
@@ -877,8 +837,7 @@ export default function Performance() {
                                                     }
                                                 >
 
-                                                    حذف
-
+                                                    {t('delete')}
                                                 </button>
 
                                             </td>

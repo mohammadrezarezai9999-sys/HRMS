@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
+import { isWebAuthnAvailable, registerFingerprint } from "../../utils/webauthn";
 
 export default function Employees() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [employees, setEmployees] = useState([]);
     const [departments, setDepartments] = useState([]);
@@ -65,7 +69,7 @@ export default function Employees() {
             );
 
             setError(
-                "دریافت اطلاعات کارمندان با مشکل مواجه شد."
+                t('employeesLoadError')
             );
         }
     };
@@ -302,7 +306,7 @@ export default function Employees() {
         if (!newEmployee) {
 
             throw new Error(
-                "پروفایل کارمند ساخته نشد."
+                t('profileCreateError')
             );
 
         }
@@ -334,6 +338,8 @@ export default function Employees() {
 
             }
         );
+
+        return { userId: newUser.id, employeeId: newEmployee.id, username: newUser.username };
 
     };
 
@@ -424,6 +430,28 @@ export default function Employees() {
     // SUBMIT
     // ============================================================
 
+    const enrollEmployeeFingerprint = async (userId) => {
+        if (!userId) return;
+        if (!isWebAuthnAvailable()) {
+            setError(t('fingerprintNotSupported'));
+            return;
+        }
+        try {
+            setLoading(true);
+            setError("");
+            await registerFingerprint(api, {
+                targetUserId: userId,
+                attachment: "any",
+                deviceName: "HR enrollment",
+            });
+            setSuccess(t('fingerprintEnrolledForEmployee'));
+        } catch (err) {
+            setError(err?.response?.data?.detail || err.message || t('fingerprintFail'));
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
 
         e.preventDefault();
@@ -440,17 +468,34 @@ export default function Employees() {
 
                 await updateEmployee();
 
-                setSuccess(
-                    "اطلاعات کارمند با موفقیت بروزرسانی شد."
-                );
+                setSuccess(t('successGeneric'));
 
             } else {
 
-                await createEmployee();
+                const created = await createEmployee();
 
-                setSuccess(
-                    "کارمند با موفقیت اضافه شد."
-                );
+                setSuccess(t('successGeneric'));
+
+                // Enroll fingerprint while employee is present (same PC/phone/USB sensor)
+                if (created?.userId && isWebAuthnAvailable()) {
+                    const enroll = window.confirm(t('enrollFingerprintNow'));
+                    if (enroll) {
+                        try {
+                            await registerFingerprint(api, {
+                                targetUserId: created.userId,
+                                attachment: "any",
+                                deviceName: "Enrollment at HR desk",
+                            });
+                            setSuccess(t('fingerprintEnrolledForEmployee'));
+                        } catch (fpErr) {
+                            console.error(fpErr);
+                            setError(
+                                (fpErr?.response?.data?.detail || fpErr.message || "") +
+                                " — " + t('fingerprintEnrollLater')
+                            );
+                        }
+                    }
+                }
 
             }
 
@@ -493,7 +538,7 @@ export default function Employees() {
 
                 setError(
                     error.message ||
-                    "عملیات با مشکل مواجه شد."
+                    t('errorGeneric')
                 );
 
             }
@@ -544,7 +589,7 @@ export default function Employees() {
 
 
             setSuccess(
-                "کارمند با موفقیت حذف شد."
+                t('successGeneric')
             );
 
 
@@ -557,9 +602,7 @@ export default function Employees() {
                 error
             );
 
-            setError(
-                "حذف کارمند با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
 
         }
 
@@ -587,12 +630,10 @@ export default function Employees() {
 
                 <div>
 
-                    <h1>
-                        کارمندان
-                    </h1>
+                    <h1>{t('employees')}</h1>
 
                     <p>
-                        مدیریت اطلاعات کارمندان شرکت
+                        {t('employeesSubtitle')}
                     </p>
 
                 </div>
@@ -601,11 +642,7 @@ export default function Employees() {
                 <button
                     className="primary-btn"
                     onClick={openAddForm}
-                >
-
-                    + کارمند جدید
-
-                </button>
+                >{t('addEmployee')}</button>
 
             </div>
 
@@ -651,8 +688,8 @@ export default function Employees() {
                     <h2>
 
                         {editingId
-                            ? "ویرایش اطلاعات کارمند"
-                            : "افزودن کارمند جدید"
+                            ? t('editEmployee')
+                            : t('addEmployee')
                         }
 
                     </h2>
@@ -669,9 +706,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نام کاربری
-                                </label>
+                                <label>{t('username')}</label>
 
                                 <input
                                     type="text"
@@ -691,9 +726,7 @@ export default function Employees() {
 
                                 <div className="form-group">
 
-                                    <label>
-                                        رمز عبور
-                                    </label>
+                                    <label>{t('password')}</label>
 
                                     <input
                                         type="password"
@@ -705,7 +738,7 @@ export default function Employees() {
                                     />
 
                                     <small>
-                                        حداقل ۸ کاراکتر
+                                        {t('minPassword')}
                                     </small>
 
                                 </div>
@@ -717,9 +750,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نام
-                                </label>
+                                <label>{t('name')}</label>
 
                                 <input
                                     type="text"
@@ -736,9 +767,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نام خانوادگی
-                                </label>
+                                <label>{t('lastName')}</label>
 
                                 <input
                                     type="text"
@@ -755,9 +784,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    ایمیل
-                                </label>
+                                <label>{t('email')}</label>
 
                                 <input
                                     type="email"
@@ -773,9 +800,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    شماره تماس
-                                </label>
+                                <label>{t('phone')}</label>
 
                                 <input
                                     type="text"
@@ -791,9 +816,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    دپارتمان
-                                </label>
+                                <label>{t('department')}</label>
 
                                 <select
                                     name="department"
@@ -801,9 +824,7 @@ export default function Employees() {
                                     onChange={handleChange}
                                 >
 
-                                    <option value="">
-                                        انتخاب دپارتمان
-                                    </option>
+                                    <option value="">{t('selectDepartment')}</option>
 
 
                                     {departments.map(
@@ -836,9 +857,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    سمت
-                                </label>
+                                <label>{t('position')}</label>
 
                                 <select
                                     name="position"
@@ -846,9 +865,7 @@ export default function Employees() {
                                     onChange={handleChange}
                                 >
 
-                                    <option value="">
-                                        انتخاب سمت
-                                    </option>
+                                    <option value="">{t('selectPosition')}</option>
 
 
                                     {positions.map(
@@ -881,9 +898,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    تاریخ استخدام
-                                </label>
+                                <label>{t('hireDate')}</label>
 
                                 <input
                                     type="date"
@@ -899,9 +914,7 @@ export default function Employees() {
 
                             <div className="form-group">
 
-                                <label>
-                                    آدرس
-                                </label>
+                                <label>{t('address')}</label>
 
                                 <input
                                     type="text"
@@ -926,10 +939,10 @@ export default function Employees() {
                             >
 
                                 {loading
-                                    ? "در حال ذخیره..."
+                                    ? t('saving')
                                     : editingId
-                                        ? "ذخیره تغییرات"
-                                        : "ثبت کارمند"
+                                        ? t('saveChanges')
+                                        : t('addEmployee')
                                 }
 
                             </button>
@@ -939,11 +952,7 @@ export default function Employees() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={closeForm}
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -966,33 +975,19 @@ export default function Employees() {
 
                         <tr>
 
-                            <th>
-                                نام
-                            </th>
+                            <th>{t('name')}</th>
 
-                            <th>
-                                ایمیل
-                            </th>
+                            <th>{t('email')}</th>
 
-                            <th>
-                                دپارتمان
-                            </th>
+                            <th>{t('department')}</th>
 
-                            <th>
-                                سمت
-                            </th>
+                            <th>{t('position')}</th>
 
-                            <th>
-                                تاریخ استخدام
-                            </th>
+                            <th>{t('hireDate')}</th>
 
-                            <th>
-                                شماره تماس
-                            </th>
+                            <th>{t('phone')}</th>
 
-                            <th>
-                                عملیات
-                            </th>
+                            <th>{t('actions')}</th>
 
                         </tr>
 
@@ -1013,8 +1008,7 @@ export default function Employees() {
                                     }}
                                 >
 
-                                    هنوز کارمندی ثبت نشده است.
-
+                                    {t('noEmployees')}
                                 </td>
 
                             </tr>
@@ -1120,10 +1114,22 @@ export default function Employees() {
                                                 }
                                             >
 
-                                                ویرایش
-
+                                                {t('edit')}
                                             </button>
 
+
+                                            <button
+                                                className="secondary-btn"
+                                                type="button"
+                                                onClick={() =>
+                                                    enrollEmployeeFingerprint(
+                                                        employee.user?.id
+                                                    )
+                                                }
+                                                title={t('registerFingerprintBtn')}
+                                            >
+                                                {t('registerFingerprintBtn')}
+                                            </button>
 
                                             <button
                                                 className="danger-btn"
@@ -1134,8 +1140,7 @@ export default function Employees() {
                                                 }
                                             >
 
-                                                حذف
-
+                                                {t('delete')}
                                             </button>
 
                                         </td>

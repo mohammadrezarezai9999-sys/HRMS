@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Notifications() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [notifications, setNotifications] = useState([]);
     const [employees, setEmployees] = useState([]);
@@ -43,7 +46,7 @@ export default function Notifications() {
             );
 
             setError(
-                "دریافت اعلان‌ها با مشکل مواجه شد."
+                t('loadError')
             );
         }
     };
@@ -70,9 +73,7 @@ export default function Notifications() {
                 error
             );
 
-            setError(
-                "دریافت کارمندان با مشکل مواجه شد."
-            );
+            setError(t('employeesLoadError'));
         }
     };
 
@@ -162,9 +163,7 @@ export default function Notifications() {
 
         if (!form.user) {
 
-            setError(
-                "لطفاً کارمند را انتخاب کنید."
-            );
+            setError(t('selectEmployeeRequired'));
 
             setSending(false);
 
@@ -174,7 +173,7 @@ export default function Notifications() {
         if (!form.message.trim()) {
 
             setError(
-                "لطفاً متن اعلان را وارد کنید."
+                t('messageRequired')
             );
 
             setSending(false);
@@ -192,9 +191,7 @@ export default function Notifications() {
                 }
             );
 
-            setSuccess(
-                "اعلان با موفقیت ارسال شد."
-            );
+            setSuccess(t('successGeneric'));
 
             resetForm();
 
@@ -239,9 +236,7 @@ export default function Notifications() {
 
             } else {
 
-                setError(
-                    "ارسال اعلان با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
 
             }
 
@@ -273,9 +268,7 @@ export default function Notifications() {
 
             console.error(error);
 
-            setError(
-                "تغییر وضعیت اعلان انجام نشد."
-            );
+            setError(t('saveError'));
         }
     };
 
@@ -300,9 +293,7 @@ export default function Notifications() {
 
             console.error(error);
 
-            setError(
-                "تغییر وضعیت اعلان انجام نشد."
-            );
+            setError(t('saveError'));
         }
     };
 
@@ -314,7 +305,7 @@ export default function Notifications() {
 
         if (
             !window.confirm(
-                "آیا از حذف این اعلان مطمئن هستید؟"
+                t('confirmDelete')
             )
         ) {
             return;
@@ -326,9 +317,7 @@ export default function Notifications() {
                 `notifications/${id}/`
             );
 
-            setSuccess(
-                "اعلان حذف شد."
-            );
+            setSuccess(t('successGeneric'));
 
             loadNotifications();
 
@@ -336,9 +325,7 @@ export default function Notifications() {
 
             console.error(error);
 
-            setError(
-                "حذف اعلان انجام نشد."
-            );
+            setError(t('deleteError'));
         }
     };
 
@@ -378,20 +365,7 @@ export default function Notifications() {
     // ============================================================
     // DATE
     // ============================================================
-
-    const formatDate = (date) => {
-
-        if (!date) {
-            return "-";
-        }
-
-        return new Date(
-            date
-        ).toLocaleString("fa-IR");
-
-    };
-
-    // ============================================================
+// ============================================================
     // RENDER
     // ============================================================
 
@@ -399,7 +373,7 @@ export default function Notifications() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* ====================================================
@@ -410,12 +384,10 @@ export default function Notifications() {
 
                 <div>
 
-                    <h1>
-                        اعلان‌ها
-                    </h1>
+                    <h1>{t('notifications')}</h1>
 
                     <p>
-                        ارسال و مدیریت اعلان‌های کارکنان
+                        {t('notificationsSubtitle')}
                     </p>
 
                 </div>
@@ -435,8 +407,8 @@ export default function Notifications() {
                 >
 
                     {showForm
-                        ? "بستن فرم"
-                        : "+ اعلان جدید"
+                        ? t('closeForm')
+                        : t('addNotification')
                     }
 
                 </button>
@@ -479,7 +451,7 @@ export default function Notifications() {
                 <div className="admin-card employee-form">
 
                     <h2>
-                        ارسال اعلان جدید
+                        {t('addNotification')}
                     </h2>
 
                     <form
@@ -493,7 +465,7 @@ export default function Notifications() {
                             <div className="form-group">
 
                                 <label>
-                                    گیرنده
+                                    {t('recipient')}
                                 </label>
 
                                 <select
@@ -503,9 +475,7 @@ export default function Notifications() {
                                     required
                                 >
 
-                                    <option value="">
-                                        انتخاب کارمند
-                                    </option>
+                                    <option value="">{t('selectEmployee')}</option>
 
                                     {employees.map(
                                         employee => (
@@ -544,7 +514,7 @@ export default function Notifications() {
                             >
 
                                 <label>
-                                    متن اعلان
+                                    {t('message')}
                                 </label>
 
                                 <textarea
@@ -552,7 +522,7 @@ export default function Notifications() {
                                     value={form.message}
                                     onChange={handleChange}
                                     rows="5"
-                                    placeholder="متن اعلان را وارد کنید..."
+                                    placeholder={t('messagePlaceholder')}
                                     required
                                 />
 
@@ -570,8 +540,8 @@ export default function Notifications() {
                             >
 
                                 {sending
-                                    ? "در حال ارسال..."
-                                    : "ارسال اعلان"
+                                    ? t('sending')
+                                    : t('addNotification')
                                 }
 
                             </button>
@@ -588,8 +558,7 @@ export default function Notifications() {
                                 }}
                             >
 
-                                انصراف
-
+                                {t('cancel')}
                             </button>
 
                         </div>
@@ -610,7 +579,7 @@ export default function Notifications() {
                 <div className="kpi">
 
                     <span>
-                        کل اعلان‌ها
+                        {t('totalNotifications')}
                     </span>
 
                     <b>
@@ -623,7 +592,7 @@ export default function Notifications() {
                 <div className="kpi">
 
                     <span>
-                        خوانده‌نشده
+                        {t('unread')}
                     </span>
 
                     <b>
@@ -636,7 +605,7 @@ export default function Notifications() {
                 <div className="kpi">
 
                     <span>
-                        خوانده‌شده
+                        {t('isRead')}
                     </span>
 
                     <b>
@@ -659,7 +628,7 @@ export default function Notifications() {
                     <div>
 
                         <h2>
-                            لیست اعلان‌ها
+                            {t('notificationsList')}
                         </h2>
 
                     </div>
@@ -667,9 +636,7 @@ export default function Notifications() {
                     <button
                         className="secondary-btn"
                         onClick={loadNotifications}
-                    >
-                        ↻ بروزرسانی
-                    </button>
+                    >{t('refresh')}</button>
 
                 </div>
 
@@ -687,24 +654,16 @@ export default function Notifications() {
                                 </th>
 
                                 <th>
-                                    گیرنده
+                                    {t('recipient')}
                                 </th>
 
-                                <th>
-                                    پیام
-                                </th>
+                                <th>{t('message')}</th>
 
-                                <th>
-                                    وضعیت
-                                </th>
+                                <th>{t('status')}</th>
 
-                                <th>
-                                    تاریخ
-                                </th>
+                                <th>{t('date')}</th>
 
-                                <th>
-                                    عملیات
-                                </th>
+                                <th>{t('actions')}</th>
 
                             </tr>
 
@@ -726,7 +685,7 @@ export default function Notifications() {
                                                 "40px"
                                         }}
                                     >
-                                        در حال دریافت...
+                                        {t('loadingData')}
                                     </td>
 
                                 </tr>
@@ -744,7 +703,7 @@ export default function Notifications() {
                                                 "40px"
                                         }}
                                     >
-                                        هیچ اعلانی وجود ندارد.
+                                        {t('noNotifications')}
                                     </td>
 
                                 </tr>
@@ -800,13 +759,13 @@ export default function Notifications() {
                                                 {notification.is_read ? (
 
                                                     <span className="status-badge">
-                                                        خوانده‌شده
+                                                        {t('isRead')}
                                                     </span>
 
                                                 ) : (
 
                                                     <span className="status-badge pending">
-                                                        جدید
+                                                        {t('newBadge')}
                                                     </span>
 
                                                 )}
@@ -837,7 +796,7 @@ export default function Notifications() {
                                                                 )
                                                             }
                                                         >
-                                                            خوانده‌نشده
+                                                            {t('unread')}
                                                         </button>
 
                                                     ) : (
@@ -850,7 +809,7 @@ export default function Notifications() {
                                                                 )
                                                             }
                                                         >
-                                                            خوانده شد
+                                                            {t('markedRead')}
                                                         </button>
 
                                                     )}
@@ -863,7 +822,7 @@ export default function Notifications() {
                                                             )
                                                         }
                                                     >
-                                                        حذف
+                                                        {t('delete')}
                                                     </button>
 
                                                 </div>

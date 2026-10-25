@@ -215,7 +215,7 @@ class DashboardView(APIView):
 
 
         # ----------------------------------------------------
-        # آخرین درخواست‌های مرخصی
+        # last leave request
         # ----------------------------------------------------
 
         recent_leave_requests = LeaveRequest.objects.select_related(

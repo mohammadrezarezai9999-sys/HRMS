@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Documents() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // ============================================================
     // DATA
@@ -55,9 +58,7 @@ export default function Documents() {
                 error
             );
 
-            setError(
-                "دریافت اسناد با مشکل مواجه شد."
-            );
+            setError(t('loadError'));
         }
     };
 
@@ -83,9 +84,7 @@ export default function Documents() {
                 error
             );
 
-            setError(
-                "دریافت لیست کارمندان با مشکل مواجه شد."
-            );
+            setError(t('employeesLoadError'));
         }
     };
 
@@ -209,9 +208,7 @@ export default function Documents() {
 
         if (!form.employee) {
 
-            setError(
-                "لطفاً کارمند را انتخاب کنید."
-            );
+            setError(t('selectEmployeeRequired'));
 
             setLoading(false);
 
@@ -220,9 +217,7 @@ export default function Documents() {
 
         if (!form.doc_type.trim()) {
 
-            setError(
-                "لطفاً نوع سند را وارد کنید."
-            );
+            setError(t('docTypeRequired'));
 
             setLoading(false);
 
@@ -231,9 +226,7 @@ export default function Documents() {
 
         if (!form.file) {
 
-            setError(
-                "لطفاً فایل سند را انتخاب کنید."
-            );
+            setError(t('fileRequired'));
 
             setLoading(false);
 
@@ -278,9 +271,7 @@ export default function Documents() {
                 }
             );
 
-            setSuccess(
-                "سند با موفقیت ثبت شد."
-            );
+            setSuccess(t('successGeneric'));
 
             resetForm();
 
@@ -334,9 +325,7 @@ export default function Documents() {
 
             } else {
 
-                setError(
-                    "ثبت سند با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
             }
 
         } finally {
@@ -354,7 +343,7 @@ export default function Documents() {
 
         const confirmed =
             window.confirm(
-                "آیا از حذف این سند مطمئن هستید؟"
+                t('confirmDelete')
             );
 
         if (!confirmed) {
@@ -367,9 +356,7 @@ export default function Documents() {
                 `documents/${id}/`
             );
 
-            setSuccess(
-                "سند با موفقیت حذف شد."
-            );
+            setSuccess(t('successGeneric'));
 
             loadDocuments();
 
@@ -380,9 +367,7 @@ export default function Documents() {
                 error
             );
 
-            setError(
-                "حذف سند با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
         }
     };
 
@@ -394,7 +379,7 @@ export default function Documents() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* ====================================================
@@ -405,13 +390,9 @@ export default function Documents() {
 
                 <div>
 
-                    <h1>
-                        اسناد کارمندان
-                    </h1>
+                    <h1>{t('documents')}</h1>
 
-                    <p>
-                        مدیریت مدارک و اسناد کارمندان
-                    </p>
+                    <p>{t('documentsSubtitle')}</p>
 
                 </div>
 
@@ -430,8 +411,8 @@ export default function Documents() {
                 >
 
                     {showForm
-                        ? "بستن فرم"
-                        : "+ سند جدید"
+                        ? t('closeForm')
+                        : t('addDocument')
                     }
 
                 </button>
@@ -477,9 +458,7 @@ export default function Documents() {
 
                 <div className="admin-card employee-form">
 
-                    <h2>
-                        ثبت سند جدید
-                    </h2>
+                    <h2>{t('addDocument')}</h2>
 
                     <form
                         onSubmit={handleSubmit}
@@ -493,9 +472,7 @@ export default function Documents() {
 
                             <div className="form-group">
 
-                                <label>
-                                    کارمند
-                                </label>
+                                <label>{t('employee')}</label>
 
                                 <select
                                     name="employee"
@@ -504,9 +481,7 @@ export default function Documents() {
                                     required
                                 >
 
-                                    <option value="">
-                                        انتخاب کارمند
-                                    </option>
+                                    <option value="">{t('selectEmployee')}</option>
 
                                     {employees.map(
                                         employee => (
@@ -536,16 +511,14 @@ export default function Documents() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نوع سند
-                                </label>
+                                <label>{t('docType')}</label>
 
                                 <input
                                     type="text"
                                     name="doc_type"
                                     value={form.doc_type}
                                     onChange={handleChange}
-                                    placeholder="مثلاً تذکره، قرارداد، سند تحصیلی"
+                                    placeholder={t('docTypePlaceholder')}
                                     required
                                 />
 
@@ -564,7 +537,7 @@ export default function Documents() {
                             >
 
                                 <label>
-                                    فایل سند
+                                    {t('documentFile')}
                                 </label>
 
                                 <input
@@ -578,7 +551,7 @@ export default function Documents() {
 
                                     <small>
 
-                                        فایل انتخاب‌شده:
+                                        {t('selectedFile')}
                                         {" "}
                                         {form.file.name}
 
@@ -604,8 +577,8 @@ export default function Documents() {
                             >
 
                                 {loading
-                                    ? "در حال آپلود..."
-                                    : "ثبت سند"
+                                    ? t('uploading')
+                                    : t('addDocument')
                                 }
 
                             </button>
@@ -614,11 +587,7 @@ export default function Documents() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={closeForm}
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -640,11 +609,11 @@ export default function Documents() {
                     <div>
 
                         <h2>
-                            اسناد ثبت‌شده
+                            {t('documentsList')}
                         </h2>
 
                         <p>
-                            تعداد اسناد:
+                            {t('documentsCount')}
                             {" "}
                             <strong>
                                 {documents.length}
@@ -668,25 +637,17 @@ export default function Documents() {
                                     #
                                 </th>
 
-                                <th>
-                                    کارمند
-                                </th>
+                                <th>{t('employee')}</th>
+
+                                <th>{t('docType')}</th>
+
+                                <th>{t('file')}</th>
 
                                 <th>
-                                    نوع سند
+                                    {t('uploadDate')}
                                 </th>
 
-                                <th>
-                                    فایل
-                                </th>
-
-                                <th>
-                                    تاریخ آپلود
-                                </th>
-
-                                <th>
-                                    عملیات
-                                </th>
+                                <th>{t('actions')}</th>
 
                             </tr>
 
@@ -705,11 +666,7 @@ export default function Documents() {
                                             textAlign: "center",
                                             padding: "40px"
                                         }}
-                                    >
-
-                                        در حال دریافت اطلاعات...
-
-                                    </td>
+                                    >{t('loadingData')}</td>
 
                                 </tr>
 
@@ -725,8 +682,7 @@ export default function Documents() {
                                         }}
                                     >
 
-                                        هنوز سندی ثبت نشده است.
-
+                                        {t('noDocuments')}
                                     </td>
 
                                 </tr>
@@ -794,8 +750,7 @@ export default function Documents() {
                                                         className="primary-btn"
                                                     >
 
-                                                        مشاهده فایل
-
+                                                        {t('viewFile')}
                                                     </a>
 
                                                 ) : (
@@ -836,8 +791,7 @@ export default function Documents() {
                                                     }
                                                 >
 
-                                                    حذف
-
+                                                    {t('delete')}
                                                 </button>
 
                                             </td>

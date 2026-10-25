@@ -2,15 +2,13 @@ from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 
 class IsAdmin(BasePermission):
-    """دسترسی کامل فقط برای کاربران با role=ADMIN"""
+    """ role=ADMIN"""
 
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated and request.user.is_admin_role)
 
 
 class IsOwnerOrAdmin(BasePermission):
-    """ادمین به همه‌چیز دسترسی دارد؛ کارمند فقط به رکوردهای مرتبط با خودش
-    (چه برای خواندن، چه برای نوشتن)."""
 
     def has_permission(self, request, view):
         return bool(request.user and request.user.is_authenticated)
@@ -24,9 +22,6 @@ class IsOwnerOrAdmin(BasePermission):
 
 
 class IsOwnerReadOnlyOrAdminWrite(BasePermission):
-    """کارمند فقط خواندن رکورد خودش؛ نوشتن/ویرایش فقط برای ادمین
-    (مناسب Payroll و PerformanceReview)."""
-
     def has_permission(self, request, view):
         if not (request.user and request.user.is_authenticated):
             return False

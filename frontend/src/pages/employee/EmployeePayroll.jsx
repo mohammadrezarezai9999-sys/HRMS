@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeePayroll() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
     const [payrolls, setPayrolls] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -16,7 +19,7 @@ export default function EmployeePayroll() {
             setPayrolls(data.results || data);
         } catch (error) {
             console.error("Payroll error:", error);
-            setError("دریافت اطلاعات حقوق و دستمزد با مشکل مواجه شد.");
+            setError(t('loadError'));
         } finally {
             setLoading(false);
         }
@@ -35,27 +38,25 @@ export default function EmployeePayroll() {
     };
 
     return (
-        <div className="employee-page" dir="rtl">
+        <div className="employee-page" dir={isRtl ? "rtl" : "ltr"}>
             <div className="page-header">
                 <div>
-                    <h1>حقوق و دستمزد</h1>
-                    <p>مشاهده فیش‌های حقوقی ثبت‌شده برای شما</p>
+                    <h1>{t('payroll')}</h1>
+                    <p>{t('myPayrollSubtitle')}</p>
                 </div>
 
                 <button
                     className="secondary-btn"
                     onClick={loadPayrolls}
                     disabled={loading}
-                >
-                    ↻ بروزرسانی
-                </button>
+                >{t('refresh')}</button>
             </div>
 
             {error && <div className="error-message">{error}</div>}
 
             <div className="employee-card">
                 <div className="card-header">
-                    <h2>فیش‌های حقوقی</h2>
+                    <h2>{t('payslips')}</h2>
                     <span>{payrolls.length} مورد</span>
                 </div>
 
@@ -63,26 +64,24 @@ export default function EmployeePayroll() {
                     <table>
                         <thead>
                             <tr>
-                                <th>ماه</th>
-                                <th>حقوق پایه</th>
-                                <th>اضافه‌کاری</th>
-                                <th>کسری</th>
-                                <th>مبلغ نهایی</th>
-                                <th>وضعیت</th>
+                                <th>{t('month')}</th>
+                                <th>{t('baseSalary')}</th>
+                                <th>{t('overtimeHours')}</th>
+                                <th>{t('deduction')}</th>
+                                <th>{t('netSalary')}</th>
+                                <th>{t('status')}</th>
                             </tr>
                         </thead>
 
                         <tbody>
                             {loading ? (
                                 <tr>
-                                    <td colSpan="6" className="table-message">
-                                        در حال دریافت اطلاعات...
-                                    </td>
+                                    <td colSpan="6" className="table-message">{t('loadingData')}</td>
                                 </tr>
                             ) : payrolls.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="table-message">
-                                        هنوز فیش حقوقی برای شما ثبت نشده است.
+                                        {t('noPayroll')}
                                     </td>
                                 </tr>
                             ) : (
@@ -101,7 +100,7 @@ export default function EmployeePayroll() {
                                         </td>
                                         <td>
                                             <span className="status-badge status-approved">
-                                                {item.status || "ثبت شده"}
+                                                {item.status || t('submitted')}
                                             </span>
                                         </td>
                                     </tr>

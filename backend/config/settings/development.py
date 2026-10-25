@@ -1,18 +1,29 @@
 # config/settings/development.py
-"""محیط توسعهٔ محلی — دیتابیس سبک SQLite، DEBUG روشن."""
+""" local — PostgreSQL، DEBUG روشن."""
 from .base import *  # noqa
 from decouple import config
 
 DEBUG = True
 ALLOWED_HOSTS = ['*']
 
+# PostgreSQL (same engine as production for consistency)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', default='hrms_db'),
+        'USER': config('DB_USER', default='hrms_user1'),
+        'PASSWORD': config('DB_PASSWORD', default='hrms12345'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
+        'CONN_MAX_AGE': 60,
+        'OPTIONS': {
+            'connect_timeout': 10,
+        },
     }
 }
 
 CORS_ALLOWED_ORIGINS = config(
-    'CORS_ALLOWED_ORIGINS', default='http://localhost:5173'
+    'CORS_ALLOWED_ORIGINS', default='http://localhost:5173,http://127.0.0.1:5173'
 ).split(',')
+
+CORS_ALLOW_CREDENTIALS = True

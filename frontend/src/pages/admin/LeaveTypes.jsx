@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function LeaveTypes() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // ============================================================
     // STATE
@@ -57,7 +60,7 @@ export default function LeaveTypes() {
             );
 
             setError(
-                "دریافت انواع مرخصی با مشکل مواجه شد."
+                t('loadError')
             );
 
         }
@@ -230,7 +233,7 @@ export default function LeaveTypes() {
                 );
 
                 setSuccess(
-                    "نوع مرخصی با موفقیت ویرایش شد."
+                    t('successGeneric')
                 );
 
             }
@@ -251,7 +254,7 @@ export default function LeaveTypes() {
                 );
 
                 setSuccess(
-                    "نوع مرخصی با موفقیت ایجاد شد."
+                    t('successGeneric')
                 );
 
             }
@@ -291,7 +294,7 @@ export default function LeaveTypes() {
             } else {
 
                 setError(
-                    "ذخیره نوع مرخصی با مشکل مواجه شد."
+                    t('saveError')
                 );
 
             }
@@ -313,7 +316,7 @@ export default function LeaveTypes() {
 
         const confirmed =
             window.confirm(
-                "آیا از حذف این نوع مرخصی مطمئن هستید؟"
+                t('confirmDelete')
             );
 
 
@@ -331,7 +334,7 @@ export default function LeaveTypes() {
             );
 
             setSuccess(
-                "نوع مرخصی با موفقیت حذف شد."
+                t('successGeneric')
             );
 
             await loadLeaveTypes();
@@ -363,9 +366,7 @@ export default function LeaveTypes() {
 
             } else {
 
-                setError(
-                    "حذف نوع مرخصی با مشکل مواجه شد."
-                );
+                setError(t('deleteError'));
 
             }
 
@@ -382,7 +383,7 @@ export default function LeaveTypes() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
 
@@ -394,12 +395,10 @@ export default function LeaveTypes() {
 
                 <div>
 
-                    <h1>
-                        انواع مرخصی
-                    </h1>
+                    <h1>{t('leaveTypes')}</h1>
 
                     <p>
-                        مدیریت انواع مرخصی کارمندان
+                        {t('leaveTypesSubtitle')}
                     </p>
 
                 </div>
@@ -410,8 +409,7 @@ export default function LeaveTypes() {
                     onClick={openAddForm}
                 >
 
-                    + نوع مرخصی جدید
-
+                    {t('addLeaveType')}
                 </button>
 
             </div>
@@ -458,8 +456,8 @@ export default function LeaveTypes() {
                     <h2>
 
                         {editingId
-                            ? "ویرایش نوع مرخصی"
-                            : "افزودن نوع مرخصی"
+                            ? t('editLeaveType')
+                            : t('addLeaveType')
                         }
 
                     </h2>
@@ -477,7 +475,7 @@ export default function LeaveTypes() {
                             <div className="form-group">
 
                                 <label>
-                                    نام مرخصی
+                                    {t('leaveTypeName')}
                                 </label>
 
                                 <input
@@ -485,7 +483,7 @@ export default function LeaveTypes() {
                                     name="name"
                                     value={form.name}
                                     onChange={handleChange}
-                                    placeholder="مثلاً مرخصی سالانه"
+                                    placeholder={t('leaveTypePlaceholder')}
                                     required
                                 />
 
@@ -496,9 +494,7 @@ export default function LeaveTypes() {
 
                             <div className="form-group">
 
-                                <label>
-                                    حداکثر روز در سال
-                                </label>
+                                <label>{t('maxDays')}</label>
 
                                 <input
                                     type="number"
@@ -512,7 +508,7 @@ export default function LeaveTypes() {
                                 />
 
                                 <small>
-                                    تعداد روز مجاز برای این نوع مرخصی در سال
+                                    {t('maxDaysHint')}
                                 </small>
 
                             </div>
@@ -533,13 +529,13 @@ export default function LeaveTypes() {
 
                                 {loading
 
-                                    ? "در حال ذخیره..."
+                                    ? t('saving')
 
                                     : editingId
 
-                                        ? "ذخیره تغییرات"
+                                        ? t('saveChanges')
 
-                                        : "ثبت نوع مرخصی"
+                                        : t('addLeaveType')
 
                                 }
 
@@ -550,11 +546,7 @@ export default function LeaveTypes() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={closeForm}
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -582,16 +574,12 @@ export default function LeaveTypes() {
                             </th>
 
                             <th>
-                                نام مرخصی
+                                {t('leaveTypeName')}
                             </th>
 
-                            <th>
-                                حداکثر روز در سال
-                            </th>
+                            <th>{t('maxDays')}</th>
 
-                            <th>
-                                عملیات
-                            </th>
+                            <th>{t('actions')}</th>
 
                         </tr>
 
@@ -612,8 +600,7 @@ export default function LeaveTypes() {
                                     }}
                                 >
 
-                                    هنوز نوع مرخصی ثبت نشده است.
-
+                                    {t('noLeaveTypes')}
                                 </td>
 
                             </tr>
@@ -649,7 +636,7 @@ export default function LeaveTypes() {
                                                 leaveType.max_days_per_year
                                             }
 
-                                            {" روز"}
+                                            {t('daysUnit')}
 
                                         </td>
 
@@ -672,8 +659,7 @@ export default function LeaveTypes() {
                                                     }
                                                 >
 
-                                                    ویرایش
-
+                                                    {t('edit')}
                                                 </button>
 
 
@@ -686,8 +672,7 @@ export default function LeaveTypes() {
                                                     }
                                                 >
 
-                                                    حذف
-
+                                                    {t('delete')}
                                                 </button>
 
                                             </div>

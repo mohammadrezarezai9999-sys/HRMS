@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Payroll() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [payrolls, setPayrolls] = useState([]);
     const [employees, setEmployees] = useState([]);
@@ -47,7 +50,7 @@ export default function Payroll() {
             );
 
             setError(
-                "دریافت اطلاعات حقوق با مشکل مواجه شد."
+                t('loadError')
             );
 
         }
@@ -145,9 +148,7 @@ export default function Payroll() {
             );
 
 
-            setSuccess(
-                "حقوق کارمند با موفقیت ثبت شد."
-            );
+            setSuccess(t('successGeneric'));
 
 
             setForm({
@@ -189,9 +190,7 @@ export default function Payroll() {
 
             } else {
 
-                setError(
-                    "ثبت حقوق با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
 
             }
 
@@ -212,7 +211,7 @@ export default function Payroll() {
 
         const confirmDelete =
             window.confirm(
-                "آیا از حذف این رکورد حقوق مطمئن هستید؟"
+                t('confirmDelete')
             );
 
         if (!confirmDelete) {
@@ -227,9 +226,7 @@ export default function Payroll() {
             );
 
 
-            setSuccess(
-                "رکورد حقوق حذف شد."
-            );
+            setSuccess(t('successGeneric'));
 
 
             loadPayrolls();
@@ -242,9 +239,7 @@ export default function Payroll() {
                 error
             );
 
-            setError(
-                "حذف رکورد حقوق با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
 
         }
 
@@ -304,7 +299,7 @@ export default function Payroll() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
 
@@ -316,12 +311,10 @@ export default function Payroll() {
 
                 <div>
 
-                    <h1>
-                        حقوق و دستمزد
-                    </h1>
+                    <h1>{t('payroll')}</h1>
 
                     <p>
-                        مدیریت حقوق ماهانه کارمندان
+                        {t('payrollSubtitle')}
                     </p>
 
                 </div>
@@ -342,8 +335,8 @@ export default function Payroll() {
                 >
 
                     {showForm
-                        ? "بستن فرم"
-                        : "+ ثبت حقوق جدید"
+                        ? t('closeForm')
+                        : t('addPayroll')
                     }
 
                 </button>
@@ -390,7 +383,7 @@ export default function Payroll() {
                 <div className="admin-card">
 
                     <h2>
-                        ثبت حقوق کارمند
+                        {t('addPayroll')}
                     </h2>
 
 
@@ -405,9 +398,7 @@ export default function Payroll() {
 
                             <div className="form-group">
 
-                                <label>
-                                    کارمند
-                                </label>
+                                <label>{t('employee')}</label>
 
                                 <select
                                     name="employee"
@@ -416,9 +407,7 @@ export default function Payroll() {
                                     required
                                 >
 
-                                    <option value="">
-                                        انتخاب کارمند
-                                    </option>
+                                    <option value="">{t('selectEmployee')}</option>
 
                                     {employees.map(
                                         employee => (
@@ -450,9 +439,7 @@ export default function Payroll() {
 
                             <div className="form-group">
 
-                                <label>
-                                    ماه
-                                </label>
+                                <label>{t('month')}</label>
 
                                 <select
                                     name="month"
@@ -462,56 +449,32 @@ export default function Payroll() {
                                 >
 
                                     <option value="">
-                                        انتخاب ماه
+                                        {t('selectMonth')}
                                     </option>
 
-                                    <option value="1">
-                                        حمل / فروردین
-                                    </option>
+                                    <option value="1">{lang === 'en' ? 'Farvardin (Hamal)' : 'حمل / فروردین'}</option>
 
-                                    <option value="2">
-                                        ثور / اردیبهشت
-                                    </option>
+                                    <option value="2">{lang === 'en' ? 'Ordibehesht (Saur)' : 'ثور / اردیبهشت'}</option>
 
-                                    <option value="3">
-                                        جوزا / خرداد
-                                    </option>
+                                    <option value="3">{lang === 'en' ? 'Khordad (Jawza)' : 'جوزا / خرداد'}</option>
 
-                                    <option value="4">
-                                        سرطان / تیر
-                                    </option>
+                                    <option value="4">{lang === 'en' ? 'Tir (Saratan)' : 'سرطان / تیر'}</option>
 
-                                    <option value="5">
-                                        اسد / مرداد
-                                    </option>
+                                    <option value="5">{lang === 'en' ? 'Mordad (Asad)' : 'اسد / مرداد'}</option>
 
-                                    <option value="6">
-                                        سنبله / شهریور
-                                    </option>
+                                    <option value="6">{lang === 'en' ? 'Shahrivar (Sonbola)' : 'سنبله / شهریور'}</option>
 
-                                    <option value="7">
-                                        میزان / مهر
-                                    </option>
+                                    <option value="7">{lang === 'en' ? 'Mehr (Mizan)' : 'میزان / مهر'}</option>
 
-                                    <option value="8">
-                                        عقرب / آبان
-                                    </option>
+                                    <option value="8">{lang === 'en' ? 'Aban (Aqrab)' : 'عقرب / آبان'}</option>
 
-                                    <option value="9">
-                                        قوس / آذر
-                                    </option>
+                                    <option value="9">{lang === 'en' ? 'Azar (Qaws)' : 'قوس / آذر'}</option>
 
-                                    <option value="10">
-                                        جدی / دی
-                                    </option>
+                                    <option value="10">{lang === 'en' ? 'Dey (Jadi)' : 'جدی / دی'}</option>
 
-                                    <option value="11">
-                                        دلو / بهمن
-                                    </option>
+                                    <option value="11">{lang === 'en' ? 'Bahman (Dalw)' : 'دلو / بهمن'}</option>
 
-                                    <option value="12">
-                                        حوت / اسفند
-                                    </option>
+                                    <option value="12">{lang === 'en' ? 'Esfand (Hut)' : 'حوت / اسفند'}</option>
 
                                 </select>
 
@@ -522,9 +485,7 @@ export default function Payroll() {
 
                             <div className="form-group">
 
-                                <label>
-                                    سال
-                                </label>
+                                <label>{t('year')}</label>
 
                                 <input
                                     type="number"
@@ -542,9 +503,7 @@ export default function Payroll() {
 
                             <div className="form-group">
 
-                                <label>
-                                    حقوق پایه
-                                </label>
+                                <label>{t('baseSalary')}</label>
 
                                 <input
                                     type="number"
@@ -563,9 +522,7 @@ export default function Payroll() {
 
                             <div className="form-group">
 
-                                <label>
-                                    اضافه‌کاری
-                                </label>
+                                <label>{t('overtimeHours')}</label>
 
                                 <input
                                     type="number"
@@ -583,9 +540,7 @@ export default function Payroll() {
 
                             <div className="form-group">
 
-                                <label>
-                                    پاداش
-                                </label>
+                                <label>{t('bonus')}</label>
 
                                 <input
                                     type="number"
@@ -603,9 +558,7 @@ export default function Payroll() {
 
                             <div className="form-group">
 
-                                <label>
-                                    کسورات
-                                </label>
+                                <label>{t('deduction')}</label>
 
                                 <input
                                     type="number"
@@ -632,8 +585,8 @@ export default function Payroll() {
                             >
 
                                 {loading
-                                    ? "در حال ثبت..."
-                                    : "ثبت حقوق"
+                                    ? t('submitting')
+                                    : t('addPayroll')
                                 }
 
                             </button>
@@ -647,8 +600,7 @@ export default function Payroll() {
                                 }
                             >
 
-                                انصراف
-
+                                {t('cancel')}
                             </button>
 
                         </div>
@@ -672,41 +624,25 @@ export default function Payroll() {
 
                         <tr>
 
-                            <th>
-                                کارمند
-                            </th>
+                            <th>{t('employee')}</th>
+
+                            <th>{t('month')}</th>
+
+                            <th>{t('year')}</th>
+
+                            <th>{t('baseSalary')}</th>
+
+                            <th>{t('overtimeHours')}</th>
+
+                            <th>{t('bonus')}</th>
+
+                            <th>{t('deduction')}</th>
 
                             <th>
-                                ماه
+                                {t('netSalary')}
                             </th>
 
-                            <th>
-                                سال
-                            </th>
-
-                            <th>
-                                حقوق پایه
-                            </th>
-
-                            <th>
-                                اضافه‌کاری
-                            </th>
-
-                            <th>
-                                پاداش
-                            </th>
-
-                            <th>
-                                کسورات
-                            </th>
-
-                            <th>
-                                حقوق خالص
-                            </th>
-
-                            <th>
-                                عملیات
-                            </th>
+                            <th>{t('actions')}</th>
 
                         </tr>
 
@@ -727,8 +663,7 @@ export default function Payroll() {
                                     }}
                                 >
 
-                                    هنوز رکورد حقوقی ثبت نشده است.
-
+                                    {t('noPayroll')}
                                 </td>
 
                             </tr>
@@ -811,8 +746,7 @@ export default function Payroll() {
                                                 }
                                             >
 
-                                                حذف
-
+                                                {t('delete')}
                                             </button>
 
                                         </td>

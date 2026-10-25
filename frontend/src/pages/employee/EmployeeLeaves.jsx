@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeeLeaves() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // ============================================================
     // STATE
@@ -56,7 +59,7 @@ export default function EmployeeLeaves() {
             );
 
             setError(
-                "دریافت درخواست‌های مرخصی با مشکل مواجه شد."
+                t('loadError')
             );
 
         } finally {
@@ -91,7 +94,7 @@ export default function EmployeeLeaves() {
             );
 
             setError(
-                "دریافت انواع مرخصی با مشکل مواجه شد."
+                t('loadError')
             );
 
         }
@@ -186,7 +189,7 @@ export default function EmployeeLeaves() {
 
 
             setSuccess(
-                "درخواست مرخصی با موفقیت ثبت شد."
+                t('successGeneric')
             );
 
 
@@ -249,9 +252,7 @@ export default function EmployeeLeaves() {
 
             } else {
 
-                setError(
-                    "ثبت درخواست مرخصی با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
 
             }
 
@@ -273,13 +274,13 @@ export default function EmployeeLeaves() {
         switch (status) {
 
             case "pending":
-                return "در انتظار بررسی";
+                return t('pending');
 
             case "approved":
-                return "تأیید شده";
+                return t('approved');
 
             case "rejected":
-                return "رد شده";
+                return t('rejected');
 
             default:
                 return status || "-";
@@ -320,16 +321,14 @@ export default function EmployeeLeaves() {
 
             <div
                 className="employee-page"
-                dir="rtl"
+                dir={isRtl ? "rtl" : "ltr"}
             >
 
                 <h1>
-                    مرخصی‌های من
+                    {t('myLeaves')}
                 </h1>
 
-                <p>
-                    در حال دریافت اطلاعات...
-                </p>
+                <p>{t('loadingData')}</p>
 
             </div>
 
@@ -346,7 +345,7 @@ export default function EmployeeLeaves() {
 
         <div
             className="employee-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* ====================================================
@@ -358,11 +357,11 @@ export default function EmployeeLeaves() {
                 <div>
 
                     <h1>
-                        مرخصی‌های من
+                        {t('myLeaves')}
                     </h1>
 
                     <p>
-                        مدیریت درخواست‌های مرخصی
+                        {t('leavesSubtitle')}
                     </p>
 
                 </div>
@@ -373,8 +372,7 @@ export default function EmployeeLeaves() {
                     onClick={openForm}
                 >
 
-                    + درخواست مرخصی
-
+                    {t('addLeave')}
                 </button>
 
             </div>
@@ -420,9 +418,7 @@ export default function EmployeeLeaves() {
 
                     <div className="card-header">
 
-                        <h2>
-                            ثبت درخواست مرخصی
-                        </h2>
+                        <h2>{t('addLeave')}</h2>
 
                     </div>
 
@@ -439,9 +435,7 @@ export default function EmployeeLeaves() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نوع مرخصی
-                                </label>
+                                <label>{t('leaveType')}</label>
 
                                 <select
                                     name="leave_type"
@@ -451,7 +445,7 @@ export default function EmployeeLeaves() {
                                 >
 
                                     <option value="">
-                                        انتخاب نوع مرخصی
+                                        {t('selectLeaveType')}
                                     </option>
 
 
@@ -479,9 +473,7 @@ export default function EmployeeLeaves() {
 
                             <div className="form-group">
 
-                                <label>
-                                    تاریخ شروع
-                                </label>
+                                <label>{t('startDate')}</label>
 
                                 <input
                                     type="date"
@@ -498,9 +490,7 @@ export default function EmployeeLeaves() {
 
                             <div className="form-group">
 
-                                <label>
-                                    تاریخ پایان
-                                </label>
+                                <label>{t('endDate')}</label>
 
                                 <input
                                     type="date"
@@ -518,7 +508,7 @@ export default function EmployeeLeaves() {
                             <div className="form-group full-width">
 
                                 <label>
-                                    دلیل مرخصی
+                                    {t('leaveReason')}
                                 </label>
 
                                 <textarea
@@ -526,7 +516,7 @@ export default function EmployeeLeaves() {
                                     value={form.reason}
                                     onChange={handleChange}
                                     rows="4"
-                                    placeholder="دلیل درخواست مرخصی را وارد کنید..."
+                                    placeholder={t('leaveReasonPlaceholder')}
                                 />
 
                             </div>
@@ -545,8 +535,8 @@ export default function EmployeeLeaves() {
                             >
 
                                 {saving
-                                    ? "در حال ثبت..."
-                                    : "ثبت درخواست"
+                                    ? t('submitting')
+                                    : t('addLeave')
                                 }
 
                             </button>
@@ -556,11 +546,7 @@ export default function EmployeeLeaves() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={closeForm}
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -580,7 +566,7 @@ export default function EmployeeLeaves() {
                 <div className="card-header">
 
                     <h2>
-                        درخواست‌های من
+                        {t('myRequests')}
                     </h2>
 
                     <span>
@@ -595,7 +581,7 @@ export default function EmployeeLeaves() {
                     <div className="empty-state">
 
                         <p>
-                            هنوز هیچ درخواست مرخصی ثبت نکرده‌اید.
+                            {t('noLeaves')}
                         </p>
 
                         <button
@@ -603,8 +589,7 @@ export default function EmployeeLeaves() {
                             onClick={openForm}
                         >
 
-                            ثبت اولین درخواست
-
+                            {t('addLeave')}
                         </button>
 
                     </div>
@@ -619,25 +604,19 @@ export default function EmployeeLeaves() {
 
                                 <tr>
 
+                                    <th>{t('leaveType')}</th>
+
                                     <th>
-                                        نوع مرخصی
+                                        {t('startDate')}
                                     </th>
 
                                     <th>
-                                        شروع
+                                        {t('endDate')}
                                     </th>
 
-                                    <th>
-                                        پایان
-                                    </th>
+                                    <th>{t('reason')}</th>
 
-                                    <th>
-                                        دلیل
-                                    </th>
-
-                                    <th>
-                                        وضعیت
-                                    </th>
+                                    <th>{t('status')}</th>
 
                                 </tr>
 

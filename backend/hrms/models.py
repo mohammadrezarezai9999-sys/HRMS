@@ -9,7 +9,7 @@ from django.utils import timezone
 # ============================================================
 # USER
 # ============================================================
-# یک مدل کاربر میسازد که دو نقش دارد :کاربر یا ادمین و بصورت پیش فرض کاربر است
+
 
 class User(AbstractUser):
 
@@ -490,3 +490,25 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.message[:30]}"
+
+
+# ============================================================
+# WEBAUTHN / FINGERPRINT CREDENTIAL
+# ============================================================
+
+class WebAuthnCredential(models.Model):
+    """Platform authenticator (Windows Hello, Touch ID, phone fingerprint)."""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="webauthn_credentials",
+    )
+    credential_id = models.TextField(unique=True)
+    public_key = models.TextField()
+    sign_count = models.PositiveIntegerField(default=0)
+    device_name = models.CharField(max_length=120, blank=True, default="Platform authenticator")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} — {self.device_name}"

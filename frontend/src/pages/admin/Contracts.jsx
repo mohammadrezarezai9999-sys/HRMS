@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Contracts() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // ============================================================
     // STATE
@@ -60,9 +63,7 @@ export default function Contracts() {
                 error
             );
 
-            setError(
-                "دریافت قراردادها با مشکل مواجه شد."
-            );
+            setError(t('loadError'));
 
         }
 
@@ -90,9 +91,7 @@ export default function Contracts() {
                 error
             );
 
-            setError(
-                "دریافت لیست کارمندان با مشکل مواجه شد."
-            );
+            setError(t('employeesLoadError'));
 
         }
 
@@ -324,7 +323,7 @@ export default function Contracts() {
                 );
 
                 setSuccess(
-                    "قرارداد با موفقیت ویرایش شد."
+                    t('successGeneric')
                 );
 
             }
@@ -347,7 +346,7 @@ export default function Contracts() {
                 );
 
                 setSuccess(
-                    "قرارداد با موفقیت ایجاد شد."
+                    t('successGeneric')
                 );
 
             }
@@ -384,7 +383,7 @@ export default function Contracts() {
             } else {
 
                 setError(
-                    "ذخیره قرارداد با مشکل مواجه شد."
+                    t('saveError')
                 );
 
             }
@@ -405,7 +404,7 @@ export default function Contracts() {
     const handleDelete = async (id) => {
 
         const confirmed = window.confirm(
-            "آیا از حذف این قرارداد مطمئن هستید؟"
+            t('confirmDelete')
         );
 
         if (!confirmed) {
@@ -420,7 +419,7 @@ export default function Contracts() {
             );
 
             setSuccess(
-                "قرارداد با موفقیت حذف شد."
+                t('successGeneric')
             );
 
             await loadContracts();
@@ -432,9 +431,7 @@ export default function Contracts() {
                 error
             );
 
-            setError(
-                "حذف قرارداد با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
 
         }
 
@@ -483,11 +480,11 @@ export default function Contracts() {
 
         const types = {
 
-            "full-time": "تمام وقت",
+            "full-time": t('fullTime'),
 
-            "part-time": "نیمه وقت",
+            "part-time": t('partTime'),
 
-            "contractor": "قراردادی",
+            "contractor": t('contractor'),
 
         };
 
@@ -503,11 +500,11 @@ export default function Contracts() {
     const getStatus = (status) => {
 
         if (status === "active") {
-            return "فعال";
+            return t('active');
         }
 
         if (status === "expired") {
-            return "منقضی";
+            return t('expired');
         }
 
         return status;
@@ -533,11 +530,11 @@ export default function Contracts() {
                 <div>
 
                     <h1>
-                        قراردادهای کارمندان
+                        {t('contracts')}
                     </h1>
 
                     <p>
-                        مدیریت قراردادهای کاری کارمندان
+                        {t('contractsSubtitle')}
                     </p>
 
                 </div>
@@ -546,11 +543,7 @@ export default function Contracts() {
                 <button
                     className="primary-btn"
                     onClick={openAddForm}
-                >
-
-                    + قرارداد جدید
-
-                </button>
+                >{t('addContract')}</button>
 
             </div>
 
@@ -596,8 +589,8 @@ export default function Contracts() {
                     <h2>
 
                         {editingId
-                            ? "ویرایش قرارداد"
-                            : "افزودن قرارداد جدید"
+                            ? t('editContract')
+                            : t('addContract')
                         }
 
                     </h2>
@@ -615,9 +608,7 @@ export default function Contracts() {
 
                             <div className="form-group">
 
-                                <label>
-                                    کارمند
-                                </label>
+                                <label>{t('employee')}</label>
 
                                 <select
                                     name="employee"
@@ -626,9 +617,7 @@ export default function Contracts() {
                                     required
                                 >
 
-                                    <option value="">
-                                        انتخاب کارمند
-                                    </option>
+                                    <option value="">{t('selectEmployee')}</option>
 
 
                                     {employees.map(
@@ -657,9 +646,7 @@ export default function Contracts() {
 
                             <div className="form-group">
 
-                                <label>
-                                    تاریخ شروع
-                                </label>
+                                <label>{t('startDate')}</label>
 
                                 <input
                                     type="date"
@@ -676,9 +663,7 @@ export default function Contracts() {
 
                             <div className="form-group">
 
-                                <label>
-                                    تاریخ پایان
-                                </label>
+                                <label>{t('endDate')}</label>
 
                                 <input
                                     type="date"
@@ -688,7 +673,7 @@ export default function Contracts() {
                                 />
 
                                 <small>
-                                    برای قرارداد بدون تاریخ پایان خالی بگذارید.
+                                    {t('contractEndHint')}
                                 </small>
 
                             </div>
@@ -699,7 +684,7 @@ export default function Contracts() {
                             <div className="form-group">
 
                                 <label>
-                                    نوع قرارداد
+                                    {t('contractType')}
                                 </label>
 
                                 <select
@@ -708,17 +693,13 @@ export default function Contracts() {
                                     onChange={handleChange}
                                 >
 
-                                    <option value="full-time">
-                                        تمام وقت
-                                    </option>
+                                    <option value="full-time">{t('fullTime')}</option>
 
                                     <option value="part-time">
-                                        نیمه وقت
+                                        {t('partTime')}
                                     </option>
 
-                                    <option value="contractor">
-                                        قراردادی
-                                    </option>
+                                    <option value="contractor">{t('contractor')}</option>
 
                                 </select>
 
@@ -729,9 +710,7 @@ export default function Contracts() {
 
                             <div className="form-group">
 
-                                <label>
-                                    حقوق
-                                </label>
+                                <label>{t('salary')}</label>
 
                                 <input
                                     type="number"
@@ -751,7 +730,7 @@ export default function Contracts() {
                             <div className="form-group">
 
                                 <label>
-                                    وضعیت قرارداد
+                                    {t('contractStatus')}
                                 </label>
 
                                 <select
@@ -760,13 +739,9 @@ export default function Contracts() {
                                     onChange={handleChange}
                                 >
 
-                                    <option value="active">
-                                        فعال
-                                    </option>
+                                    <option value="active">{t('active')}</option>
 
-                                    <option value="expired">
-                                        منقضی
-                                    </option>
+                                    <option value="expired">{t('expired')}</option>
 
                                 </select>
 
@@ -778,7 +753,7 @@ export default function Contracts() {
                             <div className="form-group">
 
                                 <label>
-                                    فایل قرارداد
+                                    {t('contractFile')}
                                 </label>
 
                                 <input
@@ -787,7 +762,7 @@ export default function Contracts() {
                                 />
 
                                 <small>
-                                    فایل PDF یا سند قرارداد
+                                    {t('contractFileHint')}
                                 </small>
 
                             </div>
@@ -809,10 +784,10 @@ export default function Contracts() {
                             >
 
                                 {loading
-                                    ? "در حال ذخیره..."
+                                    ? t('saving')
                                     : editingId
-                                        ? "ذخیره تغییرات"
-                                        : "ثبت قرارداد"
+                                        ? t('saveChanges')
+                                        : t('addContract')
                                 }
 
                             </button>
@@ -822,11 +797,7 @@ export default function Contracts() {
                                 type="button"
                                 className="secondary-btn"
                                 onClick={closeForm}
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -854,37 +825,27 @@ export default function Contracts() {
                                 #
                             </th>
 
+                            <th>{t('employee')}</th>
+
                             <th>
-                                کارمند
+                                {t('contractType')}
                             </th>
 
                             <th>
-                                نوع قرارداد
+                                {t('startDate')}
                             </th>
 
                             <th>
-                                شروع
+                                {t('endDate')}
                             </th>
 
-                            <th>
-                                پایان
-                            </th>
+                            <th>{t('salary')}</th>
 
-                            <th>
-                                حقوق
-                            </th>
+                            <th>{t('status')}</th>
 
-                            <th>
-                                وضعیت
-                            </th>
+                            <th>{t('file')}</th>
 
-                            <th>
-                                فایل
-                            </th>
-
-                            <th>
-                                عملیات
-                            </th>
+                            <th>{t('actions')}</th>
 
                         </tr>
 
@@ -905,8 +866,7 @@ export default function Contracts() {
                                     }}
                                 >
 
-                                    هنوز قراردادی ثبت نشده است.
-
+                                    {t('noContracts')}
                                 </td>
 
                             </tr>
@@ -961,7 +921,7 @@ export default function Contracts() {
 
                                     <td>
 
-                                        {contract.end_date || "بدون پایان"}
+                                        {contract.end_date || t('noEnd')}
 
                                     </td>
 
@@ -1013,8 +973,7 @@ export default function Contracts() {
                                                 rel="noreferrer"
                                             >
 
-                                                مشاهده فایل
-
+                                                {t('viewFile')}
                                             </a>
 
                                         ) : (
@@ -1046,8 +1005,7 @@ export default function Contracts() {
                                                 }
                                             >
 
-                                                ویرایش
-
+                                                {t('edit')}
                                             </button>
 
 
@@ -1060,8 +1018,7 @@ export default function Contracts() {
                                                 }
                                             >
 
-                                                حذف
-
+                                                {t('delete')}
                                             </button>
 
                                         </div>

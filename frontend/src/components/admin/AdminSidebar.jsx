@@ -1,144 +1,67 @@
-
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import "./AdminSidebar.css";
 
 export default function AdminSidebar() {
+  const { logout } = useAuth();
+  const { t } = useLanguage();
 
-    const menuItems = [
-        {
-            title: "داشبورد",
-            path: "/admin",
-            icon: "🏠",
-        },
-        {
-            title: "مدیریت کاربران",
-            path: "/admin/users",
-            icon: "👥",
-        },
-        {
-            title: "کارمندان",
-            path: "/admin/employees",
-            icon: "🧑‍💼",
-        },
-        {
-            title: "دپارتمان‌ها",
-            path: "/admin/departments",
-            icon: "🏢",
-        },
-        {
-            title: "سمت‌ها",
-            path: "/admin/positions",
-            icon: "💼",
-        },
-        {
-            title: "حضور و غیاب",
-            path: "/admin/attendance",
-            icon: "⏰",
-        },
-        {
-            title: "قراردادها",
-            path: "/admin/contracts",
-            icon: "📄",
-        },
-        {
-            title: "مرخصی‌ها",
-            path: "/admin/leaves",
-            icon: "🏖️",
-        },
-        {
-            title: "حقوق و دستمزد",
-            path: "/admin/payroll",
-            icon: "💰",
-        },
-        {
-            title: "ارزیابی عملکرد",
-            path: "/admin/performance",
-            icon: "⭐",
-        },
-        {
-            title: "اسناد کارکنان",
-            path: "/admin/documents",
-            icon: "📁",
-        },
-        {
-            title: "اعلان‌ها",
-            path: "/admin/notifications",
-            icon: "🔔",
-        },
-    ];
+  const menuItems = [
+    { title: t('dashboard'), path: "/admin", icon: "🏠" },
+    { title: t('users'), path: "/admin/users", icon: "👥" },
+    { title: t('employees'), path: "/admin/employees", icon: "🧑‍💼" },
+    { title: t('departments'), path: "/admin/departments", icon: "🏢" },
+    { title: t('positions'), path: "/admin/positions", icon: "💼" },
+    { title: t('attendance'), path: "/admin/attendance", icon: "⏰" },
+    { title: t('contracts'), path: "/admin/contracts", icon: "📄" },
+    { title: t('leaves'), path: "/admin/leaves", icon: "🏖️" },
+    { title: t('leaveTypes'), path: "/admin/leave-types", icon: "📋" },
+    { title: t('payroll'), path: "/admin/payroll", icon: "💰" },
+    { title: t('performance'), path: "/admin/performance", icon: "⭐" },
+    { title: t('documents'), path: "/admin/documents", icon: "📁" },
+    { title: t('notifications'), path: "/admin/notifications", icon: "🔔" },
+  ];
 
-    return (
-        <aside className="admin-sidebar">
+  const handleLogout = () => {
+    logout();
+    window.location.href = "/login";
+  };
 
-            {/* Logo */}
-            <div className="sidebar-logo">
-                <div className="logo-icon">
-                    HR
-                </div>
+  return (
+    <aside className="admin-sidebar">
+      <div className="sidebar-logo">
+        <div className="logo-icon">HR</div>
+        <div className="logo-text">
+          <h2>HRMS</h2>
+          <span>{t('managementSystem')}</span>
+        </div>
+      </div>
 
-                <div className="logo-text">
-                    <h2>HRMS</h2>
-                    <span>Management System</span>
-                </div>
-            </div>
+      <nav className="sidebar-menu">
+        <div className="menu-title">{t('systemManagement')}</div>
 
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            end={item.path === "/admin"}
+            className={({ isActive }) =>
+              `sidebar-link ${isActive ? "active" : ""}`
+            }
+          >
+            <span className="sidebar-icon">{item.icon}</span>
+            <span className="sidebar-text">{item.title}</span>
+          </NavLink>
+        ))}
+      </nav>
 
-            {/* Menu */}
-            <nav className="sidebar-menu">
-
-                <div className="menu-title">
-                    مدیریت سیستم
-                </div>
-
-                {menuItems.map((item) => (
-
-                    <NavLink
-                        key={item.path}
-                        to={item.path}
-                        end={item.path === "/admin"}
-                        className={({ isActive }) =>
-                            `sidebar-link ${isActive ? "active" : ""}`
-                        }
-                    >
-
-                        <span className="sidebar-icon">
-                            {item.icon}
-                        </span>
-
-                        <span className="sidebar-text">
-                            {item.title}
-                        </span>
-
-                    </NavLink>
-
-                ))}
-
-            </nav>
-
-
-            {/* Bottom */}
-            <div className="sidebar-bottom">
-
-                <button
-                    className="sidebar-logout"
-                    onClick={() => {
-                        localStorage.removeItem("access");
-                        localStorage.removeItem("refresh");
-
-                        window.location.href = "/login";
-                    }}
-                >
-                    <span className="sidebar-icon">
-                        🚪
-                    </span>
-
-                    <span>
-                        خروج از حساب
-                    </span>
-                </button>
-
-            </div>
-
-        </aside>
-    );
+      <div className="sidebar-bottom">
+        <button className="sidebar-logout" onClick={handleLogout} type="button">
+          <span className="sidebar-icon">🚪</span>
+          <span>{t('logout')}</span>
+        </button>
+      </div>
+    </aside>
+  );
 }

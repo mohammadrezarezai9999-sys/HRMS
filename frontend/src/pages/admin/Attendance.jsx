@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Attendance() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // =========================================================
     // STATE
@@ -68,19 +71,19 @@ export default function Attendance() {
             if (error.response?.status === 401) {
 
                 setError(
-                    "دسترسی شما منقضی شده است. لطفاً دوباره وارد شوید."
+                    t('sessionExpired')
                 );
 
             } else if (error.response?.status === 403) {
 
                 setError(
-                    "شما اجازه مشاهده اطلاعات حضور و غیاب را ندارید."
+                    t('forbidden')
                 );
 
             } else {
 
                 setError(
-                    "دریافت اطلاعات حضور و غیاب با مشکل مواجه شد."
+                    t('attendanceLoadError')
                 );
             }
 
@@ -213,76 +216,14 @@ export default function Attendance() {
         };
 
     }, [attendance]);
-
-
-    // =========================================================
-    // FORMAT TIME
-    // =========================================================
-
-    const formatTime = (datetime) => {
-
-        if (!datetime) {
-            return "-";
-        }
-
-        try {
-
-            return new Date(datetime)
-                .toLocaleTimeString(
-                    "fa-AF",
-                    {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: false,
-                    }
-                );
-
-        } catch {
-
-            return datetime.slice(11, 16);
-
-        }
-    };
-
-
-    // =========================================================
+// =========================================================
     // FORMAT DATE
     // =========================================================
-
-    const formatDate = (date) => {
-
-        if (!date) {
-            return "-";
-        }
-
-        return date;
-
-    };
-
-
-    // =========================================================
+// =========================================================
     // STATUS LABEL
     // =========================================================
 
-    const getStatusLabel = (status) => {
-
-        switch (status) {
-
-            case "present":
-                return "حاضر";
-
-            case "late":
-                return "دیرکرد";
-
-            case "absent":
-                return "غایب";
-
-            default:
-                return "-";
-
-        }
-
-    };
+    const getStatusLabel = statusLabel;
 
 
     // =========================================================
@@ -292,7 +233,7 @@ export default function Attendance() {
     const handleDelete = async (id) => {
 
         const confirmed = window.confirm(
-            "آیا مطمئن هستید که می‌خواهید این رکورد حضور و غیاب حذف شود؟"
+            t('confirmDelete')
         );
 
         if (!confirmed) {
@@ -322,7 +263,7 @@ export default function Attendance() {
 
 
             setSuccess(
-                "رکورد حضور و غیاب با موفقیت حذف شد."
+                t('successGeneric')
             );
 
 
@@ -334,7 +275,7 @@ export default function Attendance() {
             );
 
             setError(
-                "حذف رکورد با مشکل مواجه شد."
+                t('errorGeneric')
             );
 
         }
@@ -374,12 +315,10 @@ export default function Attendance() {
 
                 <div>
 
-                    <h1>
-                        حضور و غیاب
-                    </h1>
+                    <h1>{t('attendance')}</h1>
 
                     <p>
-                        مدیریت و مشاهده ورود و خروج کارمندان
+                        {t('attendanceSubtitle')}
                     </p>
 
                 </div>
@@ -394,8 +333,8 @@ export default function Attendance() {
                 >
 
                     {refreshing
-                        ? "در حال بروزرسانی..."
-                        : "↻ بروزرسانی"
+                        ? t('refreshing')
+                        : t('refresh')
                     }
 
                 </button>
@@ -445,7 +384,7 @@ export default function Attendance() {
                 <div className="stat-card">
 
                     <div className="stat-title">
-                        کل رکوردها
+                        {t('all')}
                     </div>
 
                     <div className="stat-number">
@@ -460,7 +399,7 @@ export default function Attendance() {
                 <div className="stat-card">
 
                     <div className="stat-title">
-                        حاضر
+                        {t('present')}
                     </div>
 
                     <div className="stat-number">
@@ -475,7 +414,7 @@ export default function Attendance() {
                 <div className="stat-card">
 
                     <div className="stat-title">
-                        دیرکرد
+                        {t('late')}
                     </div>
 
                     <div className="stat-number">
@@ -490,7 +429,7 @@ export default function Attendance() {
                 <div className="stat-card">
 
                     <div className="stat-title">
-                        غایب
+                        {t('absent')}
                     </div>
 
                     <div className="stat-number">
@@ -505,7 +444,7 @@ export default function Attendance() {
                 <div className="stat-card">
 
                     <div className="stat-title">
-                        خروج ثبت شده
+                        {t('checkedOut')}
                     </div>
 
                     <div className="stat-number">
@@ -531,12 +470,12 @@ export default function Attendance() {
                     <div className="form-group">
 
                         <label>
-                            جستجوی کارمند
+                            {t('searchEmployee')}
                         </label>
 
                         <input
                             type="text"
-                            placeholder="نام کارمند..."
+                            placeholder={t('employeeNamePlaceholder')}
                             value={search}
                             onChange={(e) =>
                                 setSearch(
@@ -552,9 +491,7 @@ export default function Attendance() {
 
                     <div className="form-group">
 
-                        <label>
-                            وضعیت
-                        </label>
+                        <label>{t('status')}</label>
 
                         <select
                             value={statusFilter}
@@ -565,21 +502,13 @@ export default function Attendance() {
                             }
                         >
 
-                            <option value="all">
-                                همه
-                            </option>
+                            <option value="all">{t('all')}</option>
 
-                            <option value="present">
-                                حاضر
-                            </option>
+                            <option value="present">{t('present')}</option>
 
-                            <option value="late">
-                                دیرکرد
-                            </option>
+                            <option value="late">{t('late')}</option>
 
-                            <option value="absent">
-                                غایب
-                            </option>
+                            <option value="absent">{t('absent')}</option>
 
                         </select>
 
@@ -590,9 +519,7 @@ export default function Attendance() {
 
                     <div className="form-group">
 
-                        <label>
-                            تاریخ
-                        </label>
+                        <label>{t('date')}</label>
 
                         <input
                             type="date"
@@ -616,8 +543,7 @@ export default function Attendance() {
                             onClick={clearFilters}
                         >
 
-                            پاک کردن فیلتر
-
+                            {t('clearFilters')}
                         </button>
 
                     </div>
@@ -636,11 +562,11 @@ export default function Attendance() {
                 <div className="table-header">
 
                     <h2>
-                        سوابق حضور و غیاب
+                        {t('attendanceHistory')}
                     </h2>
 
                     <span>
-                        {filteredAttendance.length} رکورد
+                        {filteredAttendance.length} {t('records')}
                     </span>
 
                 </div>
@@ -648,22 +574,18 @@ export default function Attendance() {
 
                 {loading ? (
 
-                    <div className="loading-box">
-
-                        در حال دریافت اطلاعات...
-
-                    </div>
+                    <div className="loading-box">{t('loadingData')}</div>
 
                 ) : filteredAttendance.length === 0 ? (
 
                     <div className="empty-box">
 
                         <h3>
-                            رکوردی پیدا نشد
+                            {t('noData')}
                         </h3>
 
                         <p>
-                            اطلاعات حضور و غیاب برای فیلتر انتخاب‌شده وجود ندارد.
+                            {t('noData')}
                         </p>
 
                     </div>
@@ -682,37 +604,21 @@ export default function Attendance() {
                                         #
                                     </th>
 
-                                    <th>
-                                        کارمند
-                                    </th>
+                                    <th>{t('employee')}</th>
 
-                                    <th>
-                                        تاریخ
-                                    </th>
+                                    <th>{t('date')}</th>
 
-                                    <th>
-                                        ورود
-                                    </th>
+                                    <th>{t('checkIn')}</th>
 
-                                    <th>
-                                        خروج
-                                    </th>
+                                    <th>{t('checkOut')}</th>
 
-                                    <th>
-                                        ساعت کار
-                                    </th>
+                                    <th>{t('workedHours')}</th>
 
-                                    <th>
-                                        اضافه‌کاری
-                                    </th>
+                                    <th>{t('overtimeHours')}</th>
 
-                                    <th>
-                                        وضعیت
-                                    </th>
+                                    <th>{t('status')}</th>
 
-                                    <th>
-                                        عملیات
-                                    </th>
+                                    <th>{t('actions')}</th>
 
                                 </tr>
 
@@ -804,7 +710,7 @@ export default function Attendance() {
                                                 ) : (
 
                                                     <span className="not-checked-out">
-                                                        خروج ثبت نشده
+                                                        {t('notCheckedOut')}
                                                     </span>
 
                                                 )}
@@ -870,8 +776,7 @@ export default function Attendance() {
                                                     }
                                                 >
 
-                                                    جزئیات
-
+                                                    {t('details')}
                                                 </button>
 
 
@@ -884,8 +789,7 @@ export default function Attendance() {
                                                     }
                                                 >
 
-                                                    حذف
-
+                                                    {t('delete')}
                                                 </button>
 
                                             </td>
@@ -929,7 +833,7 @@ export default function Attendance() {
                         <div className="modal-header">
 
                             <h2>
-                                جزئیات حضور
+                                {t('attendanceDetails')}
                             </h2>
 
                             <button
@@ -949,9 +853,7 @@ export default function Attendance() {
 
                             <div className="detail-item">
 
-                                <span>
-                                    کارمند
-                                </span>
+                                <span>{t('employee')}</span>
 
                                 <strong>
                                     {
@@ -965,9 +867,7 @@ export default function Attendance() {
 
                             <div className="detail-item">
 
-                                <span>
-                                    تاریخ
-                                </span>
+                                <span>{t('date')}</span>
 
                                 <strong>
                                     {
@@ -982,7 +882,7 @@ export default function Attendance() {
                             <div className="detail-item">
 
                                 <span>
-                                    زمان ورود
+                                    {t('checkIn')}
                                 </span>
 
                                 <strong>
@@ -999,7 +899,7 @@ export default function Attendance() {
                             <div className="detail-item">
 
                                 <span>
-                                    زمان خروج
+                                    {t('checkOut')}
                                 </span>
 
                                 <strong>
@@ -1016,7 +916,7 @@ export default function Attendance() {
                             <div className="detail-item">
 
                                 <span>
-                                    ساعات کار
+                                    {t('workedHours')}
                                 </span>
 
                                 <strong>
@@ -1031,9 +931,7 @@ export default function Attendance() {
 
                             <div className="detail-item">
 
-                                <span>
-                                    اضافه‌کاری
-                                </span>
+                                <span>{t('overtimeHours')}</span>
 
                                 <strong>
                                     {
@@ -1047,9 +945,7 @@ export default function Attendance() {
 
                             <div className="detail-item">
 
-                                <span>
-                                    وضعیت
-                                </span>
+                                <span>{t('status')}</span>
 
                                 <strong>
 
@@ -1083,8 +979,7 @@ export default function Attendance() {
                                 }
                             >
 
-                                بستن
-
+                                {t('close')}
                             </button>
 
                         </div>

@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeeProfile() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,7 +25,7 @@ export default function EmployeeProfile() {
                 if (employees.length > 0) {
                     setProfile(employees[0]);
                 } else {
-                    setError("اطلاعات پروفایل پیدا نشد.");
+                    setError(t('profileNotFound'));
                 }
 
             } catch (error) {
@@ -34,7 +37,7 @@ export default function EmployeeProfile() {
 
                 setError(
                     error.response?.data?.detail ||
-                    "دریافت اطلاعات پروفایل با مشکل مواجه شد."
+                    t('profileLoadError')
                 );
 
             } finally {
@@ -54,13 +57,11 @@ export default function EmployeeProfile() {
         return (
             <div
                 className="admin-page"
-                dir="rtl"
+                dir={isRtl ? "rtl" : "ltr"}
             >
-                <h1>پروفایل من</h1>
+                <h1>{t('myProfile')}</h1>
 
-                <p>
-                    در حال دریافت اطلاعات...
-                </p>
+                <p>{t('loadingData')}</p>
             </div>
         );
 
@@ -72,10 +73,10 @@ export default function EmployeeProfile() {
         return (
             <div
                 className="admin-page"
-                dir="rtl"
+                dir={isRtl ? "rtl" : "ltr"}
             >
 
-                <h1>پروفایل من</h1>
+                <h1>{t('myProfile')}</h1>
 
                 <div className="error-message">
                     {error}
@@ -91,7 +92,7 @@ export default function EmployeeProfile() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* HEADER */}
@@ -100,12 +101,10 @@ export default function EmployeeProfile() {
 
                 <div>
 
-                    <h1>
-                        پروفایل من
-                    </h1>
+                    <h1>{t('myProfile')}</h1>
 
                     <p>
-                        اطلاعات شخصی و کاری شما
+                        {t('profileSubtitle')}
                     </p>
 
                 </div>
@@ -118,16 +117,14 @@ export default function EmployeeProfile() {
             <div className="admin-card">
 
                 <h2>
-                    اطلاعات شخصی
+                    {t('personalInfo')}
                 </h2>
 
                 <div className="form-grid">
 
                     <div className="form-group">
 
-                        <label>
-                            نام
-                        </label>
+                        <label>{t('name')}</label>
 
                         <input
                             value={
@@ -141,9 +138,7 @@ export default function EmployeeProfile() {
 
                     <div className="form-group">
 
-                        <label>
-                            نام خانوادگی
-                        </label>
+                        <label>{t('lastName')}</label>
 
                         <input
                             value={
@@ -157,9 +152,7 @@ export default function EmployeeProfile() {
 
                     <div className="form-group">
 
-                        <label>
-                            نام کاربری
-                        </label>
+                        <label>{t('username')}</label>
 
                         <input
                             value={
@@ -173,9 +166,7 @@ export default function EmployeeProfile() {
 
                     <div className="form-group">
 
-                        <label>
-                            ایمیل
-                        </label>
+                        <label>{t('email')}</label>
 
                         <input
                             value={
@@ -189,9 +180,7 @@ export default function EmployeeProfile() {
 
                     <div className="form-group">
 
-                        <label>
-                            شماره تماس
-                        </label>
+                        <label>{t('phone')}</label>
 
                         <input
                             value={
@@ -205,9 +194,7 @@ export default function EmployeeProfile() {
 
                     <div className="form-group">
 
-                        <label>
-                            تاریخ استخدام
-                        </label>
+                        <label>{t('hireDate')}</label>
 
                         <input
                             value={
@@ -221,9 +208,7 @@ export default function EmployeeProfile() {
 
                     <div className="form-group">
 
-                        <label>
-                            دپارتمان
-                        </label>
+                        <label>{t('department')}</label>
 
                         <input
                             value={
@@ -237,9 +222,7 @@ export default function EmployeeProfile() {
 
                     <div className="form-group">
 
-                        <label>
-                            سمت
-                        </label>
+                        <label>{t('position')}</label>
 
                         <input
                             value={
@@ -258,9 +241,7 @@ export default function EmployeeProfile() {
                         }}
                     >
 
-                        <label>
-                            آدرس
-                        </label>
+                        <label>{t('address')}</label>
 
                         <input
                             value={

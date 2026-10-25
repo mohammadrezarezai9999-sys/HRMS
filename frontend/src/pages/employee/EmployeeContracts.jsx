@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeeContracts() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [contracts, setContracts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -57,13 +60,13 @@ export default function EmployeeContracts() {
         switch (type) {
 
             case "full-time":
-                return "تمام وقت";
+                return t('fullTime');
 
             case "part-time":
-                return "پاره وقت";
+                return t('partTime');
 
             case "contractor":
-                return "قراردادی";
+                return t('contractor');
 
             default:
                 return type || "-";
@@ -80,10 +83,10 @@ export default function EmployeeContracts() {
         switch (status) {
 
             case "active":
-                return "فعال";
+                return t('active');
 
             case "expired":
-                return "منقضی";
+                return t('expired');
 
             default:
                 return status || "-";
@@ -101,11 +104,11 @@ export default function EmployeeContracts() {
 
             <div
                 className="employee-page"
-                dir="rtl"
+                dir={isRtl ? "rtl" : "ltr"}
             >
 
                 <h1>
-                    قراردادهای من
+                    {t('myContracts')}
                 </h1>
 
                 <p>
@@ -122,7 +125,7 @@ export default function EmployeeContracts() {
 
         <div
             className="employee-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* ====================================================
@@ -134,7 +137,7 @@ export default function EmployeeContracts() {
                 <div>
 
                     <h1>
-                        قراردادهای من
+                        {t('myContracts')}
                     </h1>
 
                     <p>
@@ -147,9 +150,7 @@ export default function EmployeeContracts() {
                 <button
                     className="employee-primary-btn"
                     onClick={loadContracts}
-                >
-                    بروزرسانی
-                </button>
+                >{t('refresh')}</button>
 
             </div>
 
@@ -177,8 +178,7 @@ export default function EmployeeContracts() {
 
                     <div className="employee-empty">
 
-                        هیچ قراردادی برای شما ثبت نشده است.
-
+                        {t('noContracts')}
                     </div>
 
                 </div>
@@ -238,9 +238,7 @@ export default function EmployeeContracts() {
 
                                 <div>
 
-                                    <span>
-                                        تاریخ شروع
-                                    </span>
+                                    <span>{t('startDate')}</span>
 
                                     <strong>
                                         {
@@ -254,14 +252,12 @@ export default function EmployeeContracts() {
 
                                 <div>
 
-                                    <span>
-                                        تاریخ پایان
-                                    </span>
+                                    <span>{t('endDate')}</span>
 
                                     <strong>
                                         {
                                             contract.end_date ||
-                                            "نامحدود"
+                                            t('noEnd')
                                         }
                                     </strong>
 
@@ -270,9 +266,7 @@ export default function EmployeeContracts() {
 
                                 <div>
 
-                                    <span>
-                                        حقوق
-                                    </span>
+                                    <span>{t('salary')}</span>
 
                                     <strong>
                                         {
@@ -299,7 +293,7 @@ export default function EmployeeContracts() {
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        مشاهده فایل قرارداد
+                                        {t('viewFile')}
                                     </a>
 
                                 </div>

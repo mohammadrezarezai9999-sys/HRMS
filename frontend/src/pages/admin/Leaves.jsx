@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function Leaves() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     // ============================================================
     // STATE
@@ -67,7 +70,7 @@ export default function Leaves() {
             );
 
             setError(
-                "دریافت درخواست‌های مرخصی با مشکل مواجه شد."
+                t('loadError')
             );
 
         }
@@ -314,15 +317,15 @@ export default function Leaves() {
 
             case "pending":
 
-                return "در انتظار بررسی";
+                return t('pending');
 
             case "approved":
 
-                return "تایید شده";
+                return t('approved');
 
             case "rejected":
 
-                return "رد شده";
+                return t('rejected');
 
             default:
 
@@ -418,7 +421,7 @@ export default function Leaves() {
 
 
             setSuccess(
-                "درخواست مرخصی با موفقیت ثبت شد."
+                t('successGeneric')
             );
 
 
@@ -454,9 +457,7 @@ export default function Leaves() {
 
             } else {
 
-                setError(
-                    "ثبت درخواست مرخصی با مشکل مواجه شد."
-                );
+                setError(t('saveError'));
 
             }
 
@@ -476,9 +477,7 @@ export default function Leaves() {
     const approve = async (id) => {
 
         const confirmed =
-            window.confirm(
-                "آیا می‌خواهید این درخواست مرخصی را تایید کنید؟"
-            );
+            window.confirm(t('confirmApproveLeave'));
 
 
         if (!confirmed) {
@@ -501,7 +500,7 @@ export default function Leaves() {
 
 
             setSuccess(
-                "درخواست مرخصی تایید شد."
+                t('successGeneric')
             );
 
 
@@ -516,9 +515,7 @@ export default function Leaves() {
             );
 
 
-            setError(
-                "تایید درخواست با مشکل مواجه شد."
-            );
+            setError(t('saveError'));
 
         }
 
@@ -532,9 +529,7 @@ export default function Leaves() {
     const reject = async (id) => {
 
         const confirmed =
-            window.confirm(
-                "آیا می‌خواهید این درخواست مرخصی را رد کنید؟"
-            );
+            window.confirm(t('confirmRejectLeave'));
 
 
         if (!confirmed) {
@@ -557,7 +552,7 @@ export default function Leaves() {
 
 
             setSuccess(
-                "درخواست مرخصی رد شد."
+                t('successGeneric')
             );
 
 
@@ -573,7 +568,7 @@ export default function Leaves() {
 
 
             setError(
-                "رد درخواست با مشکل مواجه شد."
+                t('saveError')
             );
 
         }
@@ -589,7 +584,7 @@ export default function Leaves() {
 
         const confirmed =
             window.confirm(
-                "آیا از حذف این درخواست مطمئن هستید؟"
+                t('confirmDelete')
             );
 
 
@@ -613,7 +608,7 @@ export default function Leaves() {
 
 
             setSuccess(
-                "درخواست مرخصی حذف شد."
+                t('successGeneric')
             );
 
 
@@ -628,9 +623,7 @@ export default function Leaves() {
             );
 
 
-            setError(
-                "حذف درخواست با مشکل مواجه شد."
-            );
+            setError(t('deleteError'));
 
         }
 
@@ -667,7 +660,7 @@ export default function Leaves() {
 
         <div
             className="admin-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
 
@@ -680,11 +673,11 @@ export default function Leaves() {
                 <div>
 
                     <h1>
-                        درخواست‌های مرخصی
+                        {t('leaves')}
                     </h1>
 
                     <p>
-                        مدیریت درخواست‌های مرخصی کارمندان
+                        {t('leavesSubtitle')}
                     </p>
 
                 </div>
@@ -695,8 +688,7 @@ export default function Leaves() {
                     onClick={openForm}
                 >
 
-                    + درخواست مرخصی
-
+                    {t('addLeave')}
                 </button>
 
             </div>
@@ -740,9 +732,7 @@ export default function Leaves() {
 
                 <div className="admin-card">
 
-                    <h2>
-                        ثبت درخواست مرخصی
-                    </h2>
+                    <h2>{t('addLeave')}</h2>
 
 
                     <form
@@ -756,9 +746,7 @@ export default function Leaves() {
 
                             <div className="form-group">
 
-                                <label>
-                                    کارمند
-                                </label>
+                                <label>{t('employee')}</label>
 
                                 <select
                                     name="employee"
@@ -771,9 +759,7 @@ export default function Leaves() {
                                     required
                                 >
 
-                                    <option value="">
-                                        انتخاب کارمند
-                                    </option>
+                                    <option value="">{t('selectEmployee')}</option>
 
 
                                     {employees.map(
@@ -808,9 +794,7 @@ export default function Leaves() {
 
                             <div className="form-group">
 
-                                <label>
-                                    نوع مرخصی
-                                </label>
+                                <label>{t('leaveType')}</label>
 
                                 <select
                                     name="leave_type"
@@ -824,7 +808,7 @@ export default function Leaves() {
                                 >
 
                                     <option value="">
-                                        انتخاب نوع مرخصی
+                                        {t('selectLeaveType')}
                                     </option>
 
 
@@ -850,7 +834,7 @@ export default function Leaves() {
                                                     type.max_days_per_year
                                                 }
 
-                                                {" روز"}
+                                                {t('daysUnit')}
 
                                             </option>
 
@@ -866,9 +850,7 @@ export default function Leaves() {
 
                             <div className="form-group">
 
-                                <label>
-                                    تاریخ شروع
-                                </label>
+                                <label>{t('startDate')}</label>
 
                                 <input
                                     type="date"
@@ -889,9 +871,7 @@ export default function Leaves() {
 
                             <div className="form-group">
 
-                                <label>
-                                    تاریخ پایان
-                                </label>
+                                <label>{t('endDate')}</label>
 
                                 <input
                                     type="date"
@@ -922,7 +902,7 @@ export default function Leaves() {
                             >
 
                                 <label>
-                                    دلیل مرخصی
+                                    {t('leaveReason')}
                                 </label>
 
                                 <textarea
@@ -934,7 +914,7 @@ export default function Leaves() {
                                         handleChange
                                     }
                                     rows="4"
-                                    placeholder="دلیل درخواست مرخصی..."
+                                    placeholder={t('leaveReasonPlaceholder')}
                                 />
 
                             </div>
@@ -956,8 +936,8 @@ export default function Leaves() {
                             >
 
                                 {loading
-                                    ? "در حال ثبت..."
-                                    : "ثبت درخواست"
+                                    ? t('submitting')
+                                    : t('addLeave')
                                 }
 
                             </button>
@@ -969,11 +949,7 @@ export default function Leaves() {
                                 onClick={
                                     closeForm
                                 }
-                            >
-
-                                انصراف
-
-                            </button>
+                            >{t('cancel')}</button>
 
                         </div>
 
@@ -1000,41 +976,29 @@ export default function Leaves() {
                                 #
                             </th>
 
+                            <th>{t('employee')}</th>
+
+                            <th>{t('department')}</th>
+
+                            <th>{t('leaveType')}</th>
+
                             <th>
-                                کارمند
+                                {t('startDate')}
                             </th>
 
                             <th>
-                                دپارتمان
+                                {t('endDate')}
                             </th>
 
                             <th>
-                                نوع مرخصی
+                                {t('daysCount')}
                             </th>
 
-                            <th>
-                                شروع
-                            </th>
+                            <th>{t('reason')}</th>
 
-                            <th>
-                                پایان
-                            </th>
+                            <th>{t('status')}</th>
 
-                            <th>
-                                تعداد روز
-                            </th>
-
-                            <th>
-                                دلیل
-                            </th>
-
-                            <th>
-                                وضعیت
-                            </th>
-
-                            <th>
-                                عملیات
-                            </th>
+                            <th>{t('actions')}</th>
 
                         </tr>
 
@@ -1057,8 +1021,7 @@ export default function Leaves() {
                                     }}
                                 >
 
-                                    هیچ درخواست مرخصی ثبت نشده است.
-
+                                    {t('noLeaves')}
                                 </td>
 
                             </tr>
@@ -1156,7 +1119,7 @@ export default function Leaves() {
                                                 )
                                             }
 
-                                            {" روز"}
+                                            {t('daysUnit')}
 
                                         </td>
 
@@ -1229,8 +1192,7 @@ export default function Leaves() {
                                                     }
                                                 >
 
-                                                    جزئیات
-
+                                                    {t('details')}
                                                 </button>
 
 
@@ -1248,8 +1210,7 @@ export default function Leaves() {
                                                             }
                                                         >
 
-                                                            تایید
-
+                                                            {t('approve')}
                                                         </button>
 
 
@@ -1262,8 +1223,7 @@ export default function Leaves() {
                                                             }
                                                         >
 
-                                                            رد
-
+                                                            {t('reject')}
                                                         </button>
 
                                                     </>
@@ -1280,8 +1240,7 @@ export default function Leaves() {
                                                     }
                                                 >
 
-                                                    حذف
-
+                                                    {t('delete')}
                                                 </button>
 
                                             </div>
@@ -1325,7 +1284,7 @@ export default function Leaves() {
                             <div>
 
                                 <h2>
-                                    جزئیات درخواست مرخصی
+                                    {t('leaveDetails')}
                                 </h2>
 
                             </div>
@@ -1336,11 +1295,7 @@ export default function Leaves() {
                                 onClick={
                                     closeDetails
                                 }
-                            >
-
-                                بستن
-
-                            </button>
+                            >{t('close')}</button>
 
                         </div>
 
@@ -1351,7 +1306,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    کارمند:
+                                    {t('employeeLabel')}
                                 </strong>
 
                                 <span>
@@ -1368,7 +1323,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    دپارتمان:
+                                    {t('departmentLabel')}
                                 </strong>
 
                                 <span>
@@ -1385,7 +1340,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    نوع مرخصی:
+                                    {t('leaveTypeLabel')}
                                 </strong>
 
                                 <span>
@@ -1402,7 +1357,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    وضعیت:
+                                    {t('statusLabelColon')}
                                 </strong>
 
                                 <span>
@@ -1419,7 +1374,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    تاریخ شروع:
+                                    {t('startDateLabel')}
                                 </strong>
 
                                 <span>
@@ -1434,7 +1389,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    تاریخ پایان:
+                                    {t('endDateLabel')}
                                 </strong>
 
                                 <span>
@@ -1449,7 +1404,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    تعداد روز:
+                                    {t('daysCountLabel')}
                                 </strong>
 
                                 <span>
@@ -1460,7 +1415,7 @@ export default function Leaves() {
                                         )
                                     }
 
-                                    {" روز"}
+                                    {t('daysUnit')}
 
                                 </span>
 
@@ -1470,7 +1425,7 @@ export default function Leaves() {
                             <div>
 
                                 <strong>
-                                    بررسی‌کننده:
+                                    {t('reviewerLabel')}
                                 </strong>
 
                                 <span>
@@ -1491,13 +1446,13 @@ export default function Leaves() {
                             >
 
                                 <strong>
-                                    دلیل:
+                                    {t('reasonLabel')}
                                 </strong>
 
                                 <p>
                                     {
                                         selectedLeave.reason ||
-                                        "دلیلی ثبت نشده است."
+                                        t('noReason')
                                     }
                                 </p>
 
@@ -1529,8 +1484,7 @@ export default function Leaves() {
                                     }}
                                 >
 
-                                    تایید درخواست
-
+                                    {t('approveRequest')}
                                 </button>
 
 
@@ -1547,8 +1501,7 @@ export default function Leaves() {
                                     }}
                                 >
 
-                                    رد درخواست
-
+                                    {t('rejectRequest')}
                                 </button>
 
                             </div>

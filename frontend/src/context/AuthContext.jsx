@@ -11,9 +11,11 @@ export function AuthProvider({ children }) {
     try {
       const { data } = await api.get('me/');
       setUser(data);
+      return data;
     } catch (error) {
       console.error('Load user error:', error);
       setUser(null);
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -28,22 +30,11 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (username, password) => {
-    try {
-      const { data } = await api.post('token/', {
-        username,
-        password,
-      });
-
-      localStorage.setItem('access', data.access);
-      localStorage.setItem('refresh', data.refresh);
-
-      await loadUser();
-
-      return true;
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
-    }
+    const { data } = await api.post('token/', { username, password });
+    localStorage.setItem('access', data.access);
+    localStorage.setItem('refresh', data.refresh);
+    const userData = await loadUser();
+    return userData;
   };
 
   const logout = () => {

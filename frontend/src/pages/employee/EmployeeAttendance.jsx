@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeeAttendance() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
 
     const [attendance, setAttendance] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -32,7 +35,7 @@ export default function EmployeeAttendance() {
 
             setError(
                 error.response?.data?.detail ||
-                "دریافت اطلاعات حضور و غیاب با مشکل مواجه شد."
+                t('attendanceLoadError')
             );
 
         } finally {
@@ -48,23 +51,7 @@ export default function EmployeeAttendance() {
         loadAttendance();
 
     }, []);
-
-
-    // ============================================================
-    // FORMAT TIME
-    // ============================================================
-
-    const formatTime = (datetime) => {
-
-        if (!datetime) {
-            return "-";
-        }
-
-        return datetime.slice(11, 16);
-    };
-
-
-    // ============================================================
+// ============================================================
     // STATUS
     // ============================================================
 
@@ -73,13 +60,13 @@ export default function EmployeeAttendance() {
         switch (status) {
 
             case "present":
-                return "حاضر";
+                return t('present');
 
             case "late":
-                return "با تأخیر";
+                return t('late');
 
             case "absent":
-                return "غایب";
+                return t('absent');
 
             default:
                 return status || "-";
@@ -97,16 +84,12 @@ export default function EmployeeAttendance() {
 
             <div
                 className="employee-page"
-                dir="rtl"
+                dir={isRtl ? "rtl" : "ltr"}
             >
 
-                <h1>
-                    حضور و غیاب
-                </h1>
+                <h1>{t('attendance')}</h1>
 
-                <p>
-                    در حال دریافت اطلاعات...
-                </p>
+                <p>{t('loadingData')}</p>
 
             </div>
 
@@ -119,7 +102,7 @@ export default function EmployeeAttendance() {
 
         <div
             className="employee-page"
-            dir="rtl"
+            dir={isRtl ? "rtl" : "ltr"}
         >
 
             {/* ====================================================
@@ -130,12 +113,10 @@ export default function EmployeeAttendance() {
 
                 <div>
 
-                    <h1>
-                        حضور و غیاب
-                    </h1>
+                    <h1>{t('attendance')}</h1>
 
                     <p>
-                        تاریخچه حضور و ساعات کاری شما
+                        {t('myAttendanceSubtitle')}
                     </p>
 
                 </div>
@@ -144,9 +125,7 @@ export default function EmployeeAttendance() {
                 <button
                     className="employee-primary-btn"
                     onClick={loadAttendance}
-                >
-                    بروزرسانی
-                </button>
+                >{t('refresh')}</button>
 
             </div>
 
@@ -173,7 +152,7 @@ export default function EmployeeAttendance() {
                 <div className="employee-kpi">
 
                     <span>
-                        مجموع رکوردها
+                        {t('totalRecords')}
                     </span>
 
                     <strong>
@@ -186,7 +165,7 @@ export default function EmployeeAttendance() {
                 <div className="employee-kpi">
 
                     <span>
-                        روزهای حاضر
+                        {t('presentDays')}
                     </span>
 
                     <strong>
@@ -203,9 +182,7 @@ export default function EmployeeAttendance() {
 
                 <div className="employee-kpi">
 
-                    <span>
-                        تأخیر
-                    </span>
+                    <span>{t('kpiLate')}</span>
 
                     <strong>
                         {
@@ -222,7 +199,7 @@ export default function EmployeeAttendance() {
                 <div className="employee-kpi">
 
                     <span>
-                        مجموع ساعات کار
+                        {t('totalWorkedHours')}
                     </span>
 
                     <strong>
@@ -243,7 +220,7 @@ export default function EmployeeAttendance() {
                     </strong>
 
                     <small>
-                        ساعت
+                       {t('hoursUnit')}
                     </small>
 
                 </div>
@@ -285,29 +262,19 @@ export default function EmployeeAttendance() {
 
                                 <tr>
 
-                                    <th>
-                                        تاریخ
-                                    </th>
+                                    <th>{t('date')}</th>
 
-                                    <th>
-                                        ورود
-                                    </th>
+                                    <th>{t('checkIn')}</th>
 
-                                    <th>
-                                        خروج
-                                    </th>
+                                    <th>{t('checkOut')}</th>
 
-                                    <th>
-                                        ساعت کار
-                                    </th>
+                                    <th>{t('workedHours')}</th>
 
                                     <th>
                                         اضافه کاری
                                     </th>
 
-                                    <th>
-                                        وضعیت
-                                    </th>
+                                    <th>{t('status')}</th>
 
                                 </tr>
 
@@ -355,7 +322,7 @@ export default function EmployeeAttendance() {
                                                     record.worked_hours ??
                                                     "0"
                                                 }
-                                                {" ساعت"}
+                                                {t('hoursUnit')}
                                             </td>
 
 
@@ -364,7 +331,7 @@ export default function EmployeeAttendance() {
                                                     record.overtime_hours ??
                                                     "0"
                                                 }
-                                                {" ساعت"}
+                                                {t('hoursUnit')}
                                             </td>
 
 

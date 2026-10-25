@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
+import { useLanguage } from "../../context/LanguageContext";
 
 export default function EmployeeDocuments() {
+  const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -16,7 +19,7 @@ export default function EmployeeDocuments() {
             setDocuments(data.results || data);
         } catch (error) {
             console.error("Documents error:", error);
-            setError("دریافت اسناد با مشکل مواجه شد.");
+            setError(t('loadError'));
         } finally {
             setLoading(false);
         }
@@ -27,42 +30,40 @@ export default function EmployeeDocuments() {
     }, []);
 
     const getFileName = (file) => {
-        if (!file) return "فایل سند";
+        if (!file) return t('documentFile');
         return decodeURIComponent(file.split("/").pop());
     };
 
     return (
-        <div className="employee-page" dir="rtl">
+        <div className="employee-page" dir={isRtl ? "rtl" : "ltr"}>
             <div className="page-header">
                 <div>
-                    <h1>اسناد من</h1>
-                    <p>مشاهده و دریافت اسناد ثبت‌شده برای شما</p>
+                    <h1>{t('myDocuments')}</h1>
+                    <p>{t('myDocumentsSubtitle')}</p>
                 </div>
 
                 <button
                     className="secondary-btn"
                     onClick={loadDocuments}
                     disabled={loading}
-                >
-                    ↻ بروزرسانی
-                </button>
+                >{t('refresh')}</button>
             </div>
 
             {error && <div className="error-message">{error}</div>}
 
             <div className="employee-card">
                 <div className="card-header">
-                    <h2>فایل‌های شما</h2>
+                    <h2>{t('yourFiles')}</h2>
                     <span>{documents.length} سند</span>
                 </div>
 
                 {loading ? (
                     <div className="empty-state">
-                        <p>در حال دریافت اسناد...</p>
+                        <p>{t('loadingData')}</p>
                     </div>
                 ) : documents.length === 0 ? (
                     <div className="empty-state">
-                        <p>هنوز سندی برای شما ثبت نشده است.</p>
+                        <p>{t('noDocuments')}</p>
                     </div>
                 ) : (
                     <div className="document-list">
@@ -77,7 +78,7 @@ export default function EmployeeDocuments() {
                                         </div>
 
                                         <div className="document-type">
-                                            {document.doc_type || document.document_type || "سند"}
+                                            {document.doc_type || document.document_type || t('document')}
                                         </div>
                                     </div>
                                 </div>
@@ -89,7 +90,7 @@ export default function EmployeeDocuments() {
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        دریافت
+                                        {t('download')}
                                     </a>
                                 )}
                             </div>

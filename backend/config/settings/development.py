@@ -12,7 +12,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DB_NAME', default='hrms_db'),
         'USER': config('DB_USER', default='hrms_user1'),
-        'PASSWORD': config('DB_PASSWORD', default='hrms12345'),
+        'PASSWORD': config('DB_PASSWORD', default='hrms_pass'),
         'HOST': config('DB_HOST', default='localhost'),
         'PORT': config('DB_PORT', default='5432'),
         'CONN_MAX_AGE': 60,

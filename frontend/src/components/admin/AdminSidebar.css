@@ -1,7 +1,3 @@
-/* =========================================================
-   HRMS SIDEBAR - Strong Preview Edition
-   هماهنگ با رنگ صفحه
-========================================================= */
 
 .admin-sidebar {
     position: fixed;
@@ -17,10 +13,9 @@
     z-index: 1000;
     direction: rtl;
     border-left: 1px solid rgba(148, 183, 220, 0.12);
-    overflow: visible; /* مهم برای پیش‌نمایش */
+    overflow: visible; 
 }
 
-/* نور ملایم هماهنگ با صفحه */
 .admin-sidebar::before {
     content: "";
     position: absolute;
@@ -157,7 +152,7 @@
     transform: translateY(-50%) scaleY(1);
 }
 
-/* ========== پیش‌نمایش صفحه (Preview Card) ========== */
+/* ========== (Preview Card) ========== */
 .sidebar-link .preview-card {
     position: absolute;
     left: calc(100% + 18px);
@@ -182,7 +177,7 @@
     transform: translateY(-50%) translateX(0) scale(1);
 }
 
-/* فلش کوچک پیش‌نمایش */
+
 .sidebar-link .preview-card::before {
     content: "";
     position: absolute;
@@ -196,7 +191,7 @@
     border-top: 1px solid rgba(0,0,0,0.06);
 }
 
-/* محتوای داخل پیش‌نمایش */
+
 .preview-card .preview-title {
     font-size: 13px;
     font-weight: 700;

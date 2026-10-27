@@ -1,4 +1,4 @@
-
+"""HRMS domain models."""
 # hrms/models.py
 
 from django.contrib.auth.models import AbstractUser
@@ -9,8 +9,6 @@ from django.utils import timezone
 # ============================================================
 # USER
 # ============================================================
-
-
 class User(AbstractUser):
 
     class Role(models.TextChoices):

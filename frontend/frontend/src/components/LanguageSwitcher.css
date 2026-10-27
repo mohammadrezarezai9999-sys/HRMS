@@ -1,0 +1,43 @@
+.lang-switcher {
+  position: fixed;
+  top: 12px;
+  inset-inline-end: 16px; /* right in LTR, left in RTL */
+  z-index: 9999;
+  display: flex;
+  gap: 2px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  padding: 3px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.lang-btn {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.lang-btn:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.lang-btn.active {
+  background: #0f766e;
+  color: #fff;
+}
+
+.lang-btn:focus-visible {
+  outline: 2px solid #0f766e;
+  outline-offset: 2px;
+}

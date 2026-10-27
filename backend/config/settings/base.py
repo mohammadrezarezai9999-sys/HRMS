@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
 
-    'hrms',
+    'hrms.apps.HrmsConfig',
 ]
 
 MIDDLEWARE = [

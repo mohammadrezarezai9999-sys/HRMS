@@ -252,107 +252,49 @@ export default function Employees() {
     // ============================================================
 
     const createEmployee = async () => {
+        const { data: newUser } = await api.post("users/", {
+            username: form.username,
+            password: form.password,
+            email: form.email,
+            first_name: form.first_name,
+            last_name: form.last_name,
+            role: "EMPLOYEE",
+        });
 
-        const response = await api.post(
-            "users/",
-            {
+        const userId = Number(newUser.id);
+        const profilePayload = {
+            department: form.department || null,
+            position: form.position || null,
+            hire_date: form.hire_date || null,
+            phone: form.phone || "",
+            address: form.address || "",
+        };
 
-                username: form.username,
+        const { data: empData } = await api.get("employees/");
+        const list = empData.results || empData || [];
+        let profile = list.find((e) => Number(e.user?.id) === userId);
 
-                password: form.password,
-
-                email: form.email,
-
-                first_name: form.first_name,
-
-                last_name: form.last_name,
-
-                role: "EMPLOYEE",
-
-            }
-        );
-
-
-        /*
-         * UserCreateSerializer
-         * به صورت خودکار EmployeeProfile
-         * ایجاد می‌کند.
-         */
-
-
-        const newUser = response.data;
-
-
-        /*
-         * بعد از ساخت User باید EmployeeProfile
-         * مربوط به آن را پیدا کنیم.
-         */
-
-        const employeesResponse =
-            await api.get("employees/");
-
-        const allEmployees =
-            employeesResponse.data.results ||
-            employeesResponse.data;
-
-
-        const newEmployee =
-            allEmployees.find(
-                employee =>
-                    employee.user?.id === newUser.id
-            );
-
-
-        if (!newEmployee) {
-
-            throw new Error(
-                t('profileCreateError')
-            );
-
+        if (!profile) {
+            const { data } = await api.post("employees/", {
+                user_id: userId,
+                ...profilePayload,
+            });
+            profile = data;
+        } else {
+            await api.patch(`employees/${profile.id}/`, profilePayload);
         }
 
-
-        /*
-         * حالا اطلاعات EmployeeProfile
-         * را ذخیره می‌کنیم.
-         */
-
-        await api.patch(
-            `employees/${newEmployee.id}/`,
-            {
-
-                department:
-                    form.department || null,
-
-                position:
-                    form.position || null,
-
-                hire_date:
-                    form.hire_date || null,
-
-                phone:
-                    form.phone,
-
-                address:
-                    form.address,
-
-            }
-        );
-
-        return { userId: newUser.id, employeeId: newEmployee.id, username: newUser.username };
-
+        return {
+            userId,
+            employeeId: profile.id,
+            username: newUser.username,
+        };
     };
 
 
-    // ============================================================
-    // UPDATE EMPLOYEE
-    // ============================================================
-
     const updateEmployee = async () => {
 
-        /*
-         * اطلاعات EmployeeProfile
-         */
+        
 
         await api.patch(
 
@@ -380,18 +322,7 @@ export default function Employees() {
         );
 
 
-        /*
-         * نکته:
-         *
-         * first_name
-         * last_name
-         * email
-         *
-         * متعلق به User هستند.
-         *
-         * بنابراین در این مرحله EmployeeProfile
-         * را تغییر دادیم.
-         */
+        
 
         const employee =
             employees.find(
@@ -503,9 +434,7 @@ export default function Employees() {
             await loadEmployees();
 
 
-            /*
-             * فرم را می‌بندیم
-             */
+            
 
             setShowForm(false);
 
@@ -577,11 +506,7 @@ export default function Employees() {
 
         try {
 
-            /*
-             * حذف User باعث حذف EmployeeProfile
-             * نیز می‌شود چون OneToOneField
-             * روی CASCADE است.
-             */
+            
 
             await api.delete(
                 `users/${employee.user.id}/`

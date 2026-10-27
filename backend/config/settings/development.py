@@ -1,8 +1,9 @@
-
-"""Local development — can point at local Postgres or Neon hrms_db."""
-from .base import *  # noqa
-from decouple import config
+"""Local development. Can use local Postgres or Neon via DATABASE_URL."""
 from urllib.parse import urlparse
+
+from decouple import config
+
+from .base import *  # noqa: F403
 
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
@@ -10,15 +11,15 @@ ALLOWED_HOSTS = ["*"]
 DATABASE_URL = config("DATABASE_URL", default="")
 
 if DATABASE_URL:
-    u = urlparse(DATABASE_URL)
+    parsed = urlparse(DATABASE_URL)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": u.path.lstrip("/") or "hrms_db",
-            "USER": u.username,
-            "PASSWORD": u.password,
-            "HOST": u.hostname,
-            "PORT": u.port or 5432,
+            "NAME": parsed.path.lstrip("/") or "hrms_db",
+            "USER": parsed.username,
+            "PASSWORD": parsed.password,
+            "HOST": parsed.hostname,
+            "PORT": parsed.port or 5432,
             "CONN_MAX_AGE": 60,
             "OPTIONS": {"sslmode": "require"},
         }

@@ -1,6 +1,3 @@
-"""HRMS domain models."""
-# hrms/models.py
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -148,39 +145,34 @@ class Attendance(models.Model):
         related_name='attendances',
     )
 
-    # تاریخ حضور
-    # برای هر کارمند، هر روز یک رکورد ایجاد می‌شود.
     date = models.DateField(
         default=timezone.localdate,
     )
 
-    # زمان ورود
     check_in = models.DateTimeField(
         null=True,
         blank=True,
     )
 
-    # زمان خروج
     check_out = models.DateTimeField(
         null=True,
         blank=True,
     )
 
-    # مجموع ساعات کار
     worked_hours = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         default=0,
     )
 
-    # ساعات اضافه‌کاری
+    
     overtime_hours = models.DecimalField(
         max_digits=5,
         decimal_places=2,
         default=0,
     )
 
-    # وضعیت حضور
+    
     status = models.CharField(
         max_length=10,
         choices=Status.choices,

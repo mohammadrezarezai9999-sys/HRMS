@@ -117,7 +117,7 @@ class Command(BaseCommand):
     # ------------------------------------------------------------------
     def _seed_departments(self):
         data = [
-            ("IT", "دپارتمان فناوری اطلاعات و توسعه نرم‌افزار"),
+            ("IT", "دپارتمانت تکنالوژی معلوماتی و توسعه نرم‌افزار"),
             ("HR", "منابع انسانی و جذب نیرو"),
             ("Finance", "امور مالی و حسابداری"),
             ("Sales", "فروش و بازاریابی"),
@@ -162,13 +162,13 @@ class Command(BaseCommand):
         """Create users then employee profiles. Password for all: 12345678"""
         users_spec = [
             # username, first, last, email, role, dept, position, phone, hire
-            ("admin", "مدیر", "سیستم", "admin@hrms.local", User.Role.ADMIN, None, None, "09120000000", None),
-            ("reza", "رضا", "محمدی", "reza@hrms.local", User.Role.EMPLOYEE, "IT", "IT Manager", "09121111111", date(2022, 3, 15)),
-            ("sara", "سارا", "احمدی", "sara@hrms.local", User.Role.EMPLOYEE, "HR", "HR Manager", "09122222222", date(2021, 6, 1)),
-            ("ali", "علی", "کریمی", "ali@hrms.local", User.Role.EMPLOYEE, "IT", "Senior Developer", "09123333333", date(2023, 1, 10)),
-            ("maryam", "مریم", "حسینی", "maryam@hrms.local", User.Role.EMPLOYEE, "IT", "Junior Developer", "09124444444", date(2024, 2, 20)),
-            ("hossein", "حسین", "رضایی", "hossein@hrms.local", User.Role.EMPLOYEE, "Finance", "Accountant", "09125555555", date(2022, 9, 5)),
-            ("fatemeh", "فاطمه", "نوری", "fatemeh@hrms.local", User.Role.EMPLOYEE, "Sales", "Sales Representative", "09126666666", date(2023, 7, 12)),
+            ("admin", "مدیر", "سیستم", "admin@hrms.local", User.Role.ADMIN, None, None, "0770000000", None),
+            ("reza", "رضا", "محمدی", "reza@hrms.local", User.Role.EMPLOYEE, "IT", "IT Manager", "0702111111", date(2022, 3, 15)),
+            ("sara", "سارا", "احمدی", "sara@hrms.local", User.Role.EMPLOYEE, "HR", "HR Manager", "0792222222", date(2021, 6, 1)),
+            ("ali", "علی", "کریمی", "ali@hrms.local", User.Role.EMPLOYEE, "IT", "Senior Developer", "0783333333", date(2023, 1, 10)),
+            ("maryam", "مریم", "حسینی", "maryam@hrms.local", User.Role.EMPLOYEE, "IT", "Junior Developer", "0724444444", date(2024, 2, 20)),
+            ("hossein", "حسین", "رضایی", "hossein@hrms.local", User.Role.EMPLOYEE, "Finance", "Accountant", "0735555555", date(2022, 9, 5)),
+            ("fatemeh", "فاطمه", "نوری", "fatemeh@hrms.local", User.Role.EMPLOYEE, "Sales", "Sales Representative", "0776666666", date(2023, 7, 12)),
         ]
 
         users = {}
@@ -207,7 +207,7 @@ class Command(BaseCommand):
                         "position": positions.get(pos_key) if pos_key else None,
                         "hire_date": hire,
                         "phone": phone,
-                        "address": "تهران، ایران",
+                        "address": "کابل، افغانستان",
                     },
                 )
                 if not p_created:
@@ -224,10 +224,10 @@ class Command(BaseCommand):
     # ------------------------------------------------------------------
     def _seed_leave_types(self):
         data = [
-            ("مرخصی استحقاقی", 26),
-            ("مرخصی استعلاجی", 15),
-            ("مرخصی بدون حقوق", 30),
-            ("مرخصی زایمان", 270),
+            ("رخصتی استحقاقی", 26),
+            ("رخصتی استعلاجی", 15),
+            ("رخصتی بدون حقوق", 30),
+            ("رخصتی زایمان", 270),
         ]
         result = {}
         for name, days in data:
@@ -313,15 +313,15 @@ class Command(BaseCommand):
 
     # ------------------------------------------------------------------
     def _seed_leave_requests(self, profiles, leave_types, admin_user):
-        annual = leave_types.get("مرخصی استحقاقی")
-        sick = leave_types.get("مرخصی استعلاجی")
+        annual = leave_types.get("رخصتی استحقاقی")
+        sick = leave_types.get("رخصتی استعلاجی")
         if not annual:
             return
 
         samples = [
             ("ali", annual, date(2025, 3, 10), date(2025, 3, 12), "سفر خانوادگی", LeaveRequest.Status.APPROVED),
             ("maryam", sick, date(2025, 4, 1), date(2025, 4, 2), "بیماری", LeaveRequest.Status.APPROVED),
-            ("hossein", annual, date(2025, 5, 15), date(2025, 5, 20), "مرخصی تابستانی", LeaveRequest.Status.PENDING),
+            ("hossein", annual, date(2025, 5, 15), date(2025, 5, 20), "رخصتی تابستانی", LeaveRequest.Status.PENDING),
             ("fatemeh", annual, date(2025, 2, 5), date(2025, 2, 6), "کار شخصی", LeaveRequest.Status.REJECTED),
         ]
         for uname, lt, start, end, reason, status in samples:
@@ -390,7 +390,7 @@ class Command(BaseCommand):
     def _seed_notifications(self, users):
         messages = [
             ("admin", "سیستم با موفقیت راه‌اندازی شد."),
-            ("reza", "درخواست مرخصی جدید برای بررسی دارید."),
+            ("reza", "درخواست رخصتی جدید برای بررسی دارید."),
             ("sara", "پروفایل شما به‌روزرسانی شد."),
             ("ali", "فیش حقوقی ماه جاری آماده است."),
             ("maryam", "جلسه ارزیابی عملکرد هفته آینده برگزار می‌شود."),

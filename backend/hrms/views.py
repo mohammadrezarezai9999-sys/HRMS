@@ -53,9 +53,7 @@ class MeView(APIView):
     """
     GET /api/me/
 
-    اطلاعات کاربر لاگین‌شده را برمی‌گرداند.
-    React از role برای انتخاب Dashboard استفاده می‌کند.
-    """
+   """
 
     permission_classes = [permissions.IsAuthenticated]
 
@@ -73,45 +71,29 @@ class DashboardView(APIView):
     """
     GET /api/dashboard/
 
-    اطلاعات خلاصه داشبورد مدیریت را برمی‌گرداند.
-    فقط ADMIN اجازه دسترسی دارد.
+   
     """
 
     permission_classes = [IsAdmin]
 
     def get(self, request):
 
-        # ----------------------------------------------------
-        # تاریخ امروز
-        # ----------------------------------------------------
-
+        
         today = timezone.localdate()
 
 
-        # ----------------------------------------------------
-        # کارمندان
-        # ----------------------------------------------------
 
         employee_count = EmployeeProfile.objects.count()
 
 
-        # ----------------------------------------------------
-        # دپارتمان‌ها
-        # ----------------------------------------------------
 
         department_count = Department.objects.count()
 
 
-        # ----------------------------------------------------
-        # سمت‌ها
-        # ----------------------------------------------------
 
         position_count = Position.objects.count()
 
 
-        # ----------------------------------------------------
-        # حضور امروز
-        # ----------------------------------------------------
 
         today_attendance = Attendance.objects.filter(
             date=today
@@ -133,9 +115,7 @@ class DashboardView(APIView):
         ).count()
 
 
-        # ----------------------------------------------------
-        # مرخصی‌ها
-        # ----------------------------------------------------
+       
 
         pending_leave_count = LeaveRequest.objects.filter(
             status=LeaveRequest.Status.PENDING
@@ -214,9 +194,7 @@ class DashboardView(APIView):
         ).data
 
 
-        # ----------------------------------------------------
-        # آخرین درخواست‌های مرخصی
-        # ----------------------------------------------------
+       
 
         recent_leave_requests = LeaveRequest.objects.select_related(
             'employee__user',
@@ -384,12 +362,9 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         """
         POST /api/attendance/check-in/
 
-        ثبت ورود کارمند
+       
         """
 
-        # ==========================================
-        # بررسی اینکه کاربر Employee است
-        # ==========================================
 
         if request.user.role != User.Role.EMPLOYEE:
 
@@ -401,25 +376,17 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             )
 
 
-        # ==========================================
-        # گرفتن یا ساخت EmployeeProfile
-        # ==========================================
-
         profile, created = EmployeeProfile.objects.get_or_create(
             user=request.user
         )
 
 
-        # ==========================================
-        # تاریخ امروز
-        # ==========================================
+    
 
         today = timezone.localdate()
 
 
-        # ==========================================
-        # رکورد حضور امروز
-        # ==========================================
+      
 
         attendance, created = Attendance.objects.get_or_create(
             employee=profile,
@@ -427,9 +394,6 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         )
 
 
-        # ==========================================
-        # جلوگیری از ورود دوباره
-        # ==========================================
 
         if attendance.check_in:
 
@@ -446,9 +410,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
             )
 
 
-        # ==========================================
-        # ثبت ورود
-        # ==========================================
+        
 
         services.check_in(attendance)
 
@@ -477,15 +439,15 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         """
         POST /api/attendance/check-out/
 
-        کارمند خروج خودش را ثبت می‌کند.
+       
         """
 
         profile = request.user.profile
 
-        # تاریخ امروز
+        
         today = timezone.localdate()
 
-        # پیدا کردن رکورد امروز
+       
         try:
 
             attendance = Attendance.objects.get(
@@ -502,7 +464,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # اگر ورود ثبت نشده باشد
+        
         if not attendance.check_in:
 
             return Response(
@@ -512,7 +474,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # اگر خروج قبلاً ثبت شده باشد
+       
         if attendance.check_out:
 
             return Response(
@@ -525,7 +487,7 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        # ثبت خروج و محاسبه ساعت کار
+       
         services.check_out(attendance)
 
         return Response(

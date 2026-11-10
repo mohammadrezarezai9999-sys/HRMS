@@ -45,12 +45,13 @@ def check_out(attendance):
     return attendance
 
 
-def calculate_net_salary(base_salary, overtime_pay=0, bonus=0, deduction=0):
+def calculate_net_salary(base_salary, overtime_pay=0, bonus=0, deduction=0, tax=0):
     return (
         Decimal(base_salary)
         + Decimal(overtime_pay)
         + Decimal(bonus)
         - Decimal(deduction)
+        - Decimal(tax)
     )
 
 

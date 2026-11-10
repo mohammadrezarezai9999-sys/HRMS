@@ -2,9 +2,21 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./AdminPages.css";
 import { useLanguage } from "../../context/LanguageContext";
+import {
+  jalaliMonthYearToGregorian,
+  payrollMonthNameOnly,
+  payrollYearOnly,
+  MONTH_NAMES_EN,
+  MONTH_NAMES_FA,
+} from "../../utils/date";
 
 export default function Payroll() {
   const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
+
+  // Form month/year follow the active calendar; API always receives Gregorian.
+  const uiMonthName = (m) =>
+    lang === "en" ? MONTH_NAMES_EN[m] : MONTH_NAMES_FA[m];
+
 
 
     const [payrolls, setPayrolls] = useState([]);
@@ -25,6 +37,7 @@ export default function Payroll() {
         overtime_pay: "0",
         bonus: "0",
         deduction: "0",
+        tax: "0",
     });
 
 
@@ -125,14 +138,24 @@ export default function Payroll() {
 
         try {
 
+            let month = Number(form.month);
+            let year = Number(form.year);
+
+            // Dari UI: convert Jalali month/year → Gregorian for the API
+            if (lang === "fa") {
+                const g = jalaliMonthYearToGregorian(year, month);
+                year = g.year;
+                month = g.month;
+            }
+
             await api.post(
                 "payroll/",
                 {
                     employee: Number(form.employee),
 
-                    month: Number(form.month),
+                    month,
 
-                    year: Number(form.year),
+                    year,
 
                     base_salary: form.base_salary,
 
@@ -144,6 +167,8 @@ export default function Payroll() {
 
                     deduction:
                         form.deduction || "0",
+                    tax:
+                        form.tax || "0",
                 }
             );
 
@@ -159,6 +184,7 @@ export default function Payroll() {
                 overtime_pay: "0",
                 bonus: "0",
                 deduction: "0",
+                tax: "0",
             });
 
 
@@ -452,29 +478,11 @@ export default function Payroll() {
                                         {t('selectMonth')}
                                     </option>
 
-                                    <option value="1">{lang === 'en' ? 'Farvardin (Hamal)' : 'حمل / فروردین'}</option>
-
-                                    <option value="2">{lang === 'en' ? 'Ordibehesht (Saur)' : 'ثور / اردیبهشت'}</option>
-
-                                    <option value="3">{lang === 'en' ? 'Khordad (Jawza)' : 'جوزا / خرداد'}</option>
-
-                                    <option value="4">{lang === 'en' ? 'Tir (Saratan)' : 'سرطان / تیر'}</option>
-
-                                    <option value="5">{lang === 'en' ? 'Mordad (Asad)' : 'اسد / مرداد'}</option>
-
-                                    <option value="6">{lang === 'en' ? 'Shahrivar (Sonbola)' : 'سنبله / شهریور'}</option>
-
-                                    <option value="7">{lang === 'en' ? 'Mehr (Mizan)' : 'میزان / مهر'}</option>
-
-                                    <option value="8">{lang === 'en' ? 'Aban (Aqrab)' : 'عقرب / آبان'}</option>
-
-                                    <option value="9">{lang === 'en' ? 'Azar (Qaws)' : 'قوس / آذر'}</option>
-
-                                    <option value="10">{lang === 'en' ? 'Dey (Jadi)' : 'جدی / دی'}</option>
-
-                                    <option value="11">{lang === 'en' ? 'Bahman (Dalw)' : 'دلو / بهمن'}</option>
-
-                                    <option value="12">{lang === 'en' ? 'Esfand (Hut)' : 'حوت / اسفند'}</option>
+                                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((m) => (
+                                        <option key={m} value={m}>
+                                            {uiMonthName(m)}
+                                        </option>
+                                    ))}
 
                                 </select>
 
@@ -571,6 +579,21 @@ export default function Payroll() {
 
                             </div>
 
+                            <div className="form-group">
+
+                                <label>{t('tax')}</label>
+
+                                <input
+                                    type="number"
+                                    name="tax"
+                                    value={form.tax}
+                                    onChange={handleChange}
+                                    min="0"
+                                    step="0.01"
+                                />
+
+                            </div>
+
                         </div>
 
 
@@ -637,6 +660,7 @@ export default function Payroll() {
                             <th>{t('bonus')}</th>
 
                             <th>{t('deduction')}</th>
+                            <th>{t('tax')}</th>
 
                             <th>
                                 {t('netSalary')}
@@ -689,12 +713,12 @@ export default function Payroll() {
 
 
                                         <td>
-                                            {payroll.month}
+                                            {payrollMonthNameOnly(payroll.year, payroll.month, lang)}
                                         </td>
 
 
                                         <td>
-                                            {payroll.year}
+                                            {payrollYearOnly(payroll.year, payroll.month, lang)}
                                         </td>
 
 
@@ -722,6 +746,12 @@ export default function Payroll() {
                                         <td>
                                             {formatMoney(
                                                 payroll.deduction
+                                            )}
+                                        </td>
+
+                                        <td>
+                                            {formatMoney(
+                                                payroll.tax
                                             )}
                                         </td>
 

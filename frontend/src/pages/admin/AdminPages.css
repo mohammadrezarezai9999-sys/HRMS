@@ -682,3 +682,13 @@
     }
 
 }
+
+/* responsive admin pages */
+@media (max-width: 900px) {
+    .admin-page { padding: 16px; }
+    .page-header { flex-wrap: wrap; gap: 12px; }
+}
+@media (max-width: 560px) {
+    .admin-page { padding: 12px; }
+    .page-header h1 { font-size: 22px; }
+}

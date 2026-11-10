@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from django.core.validators import FileExtensionValidator
 
 
 # ============================================================
@@ -358,6 +359,12 @@ class Payroll(models.Model):
         default=0,
     )
 
+    tax = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        default=0,
+    )
+
     net_salary = models.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -380,6 +387,7 @@ class Payroll(models.Model):
             + self.overtime_pay
             + self.bonus
             - self.deduction
+            - self.tax
         )
 
         super().save(*args, **kwargs)
@@ -441,7 +449,9 @@ class EmployeeDocument(models.Model):
     )
 
     file = models.FileField(
-        upload_to='documents/'
+        upload_to='documents/',
+        validators=[FileExtensionValidator(['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'webp'])]
+
     )
 
     uploaded_at = models.DateTimeField(

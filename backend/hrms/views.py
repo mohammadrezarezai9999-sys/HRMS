@@ -1,10 +1,12 @@
 from django.utils import timezone
-
 from rest_framework import viewsets, permissions, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.throttling import AnonRateThrottle, ScopedRateThrottle
 from . import services
 
 from .models import (
@@ -133,7 +135,7 @@ class DashboardView(APIView):
 
 
         # ----------------------------------------------------
-        # قراردادها
+        # contracts
         # ----------------------------------------------------
 
         active_contract_count = EmployeeContract.objects.filter(
@@ -177,7 +179,7 @@ class DashboardView(APIView):
 
 
         # ----------------------------------------------------
-        # آخرین حضور و غیاب
+        # last attendance
         # ----------------------------------------------------
 
         recent_attendance = Attendance.objects.select_related(
@@ -628,10 +630,6 @@ class PayrollViewSet(viewsets.ModelViewSet):
 # PERFORMANCE REVIEW
 # ============================================================
 
-# ============================================================
-# PERFORMANCE REVIEW
-# ============================================================
-
 class PerformanceReviewViewSet(viewsets.ModelViewSet):
 
     serializer_class = PerformanceReviewSerializer
@@ -742,3 +740,32 @@ class NotificationViewSet(viewsets.ModelViewSet):
             serializer.save(
                 user=user
             )
+
+class LogoutView(APIView):
+    """Blacklist refresh token so client logout is server-side effective."""
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        refresh = request.data.get("refresh")
+        if not refresh:
+            return Response(
+                {"detail": "refresh token required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        try:
+            token = RefreshToken(refresh)
+            token.blacklist()
+        except Exception:
+            return Response(
+                {"detail": "invalid token"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        return Response({"detail": "logged out"}, status=status.HTTP_205_RESET_CONTENT)
+
+
+class ThrottledTokenObtainPairView(TokenObtainPairView):
+    """Login endpoint with stricter anonymous rate limit."""
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "login"

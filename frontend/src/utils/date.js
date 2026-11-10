@@ -147,3 +147,97 @@ export function jalaliToGregorianString(jalaliStr) {
   const [gy, gm, gd] = toGregorian(jy, jm, jd);
   return `${gy}-${pad(gm)}-${pad(gd)}`;
 }
+
+
+/**
+ * Payroll helpers: backend always stores Gregorian year+month.
+ * UI may collect Jalali year+month when lang is fa.
+ * Conversion uses day 1 of the selected month as the anchor date.
+ */
+
+const MONTH_NAMES_EN = [
+  "", "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+const MONTH_NAMES_FA = [
+  "",
+  "حمل / فروردین",
+  "ثور / اردیبهشت",
+  "جوزا / خرداد",
+  "سرطان / تیر",
+  "اسد / مرداد",
+  "سنبله / شهریور",
+  "میزان / مهر",
+  "عقرب / آبان",
+  "قوس / آذر",
+  "جدی / دی",
+  "دلو / بهمن",
+  "حوت / اسفند",
+];
+
+/** Jalali year+month → Gregorian year+month (anchor: day 1 of Jalali month). */
+export function jalaliMonthYearToGregorian(jy, jm) {
+  const [gy, gm] = toGregorian(Number(jy), Number(jm), 1);
+  return { year: gy, month: gm };
+}
+
+/** Gregorian year+month → Jalali year+month (anchor: day 1 of Gregorian month). */
+export function gregorianMonthYearToJalali(gy, gm) {
+  const [jy, jm] = toJalali(Number(gy), Number(gm), 1);
+  return { year: jy, month: jm };
+}
+
+/** Label for a stored Gregorian payroll month, for current UI language. */
+export function payrollMonthLabel(gregorianMonth, lang = "fa") {
+  const m = Number(gregorianMonth);
+  if (!m || m < 1 || m > 12) return "—";
+  if (lang === "en") return MONTH_NAMES_EN[m];
+  // Show Jalali month name that corresponds to day-1 of this Gregorian month
+  // For list rows we only have G-month; pair with year when formatting full period.
+  return MONTH_NAMES_EN[m] + " / " + (MONTH_NAMES_FA[m] || m);
+}
+
+/** Full period label from stored Gregorian year+month. */
+export function payrollPeriodLabel(gregorianYear, gregorianMonth, lang = "fa") {
+  const gy = Number(gregorianYear);
+  const gm = Number(gregorianMonth);
+  if (!gy || !gm) return "—";
+  if (lang === "en") {
+    return `${MONTH_NAMES_EN[gm]} ${gy}`;
+  }
+  const { year: jy, month: jm } = gregorianMonthYearToJalali(gy, gm);
+  return `${MONTH_NAMES_FA[jm]} ${jy}`;
+}
+
+export function currentGregorianYearMonth() {
+  const now = new Date();
+  return { year: now.getFullYear(), month: now.getMonth() + 1 };
+}
+
+export function currentJalaliYearMonth() {
+  const now = new Date();
+  const [jy, jm] = toJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+  return { year: jy, month: jm };
+}
+
+export { MONTH_NAMES_EN, MONTH_NAMES_FA };
+
+/** Month name only for a stored Gregorian payroll period. */
+export function payrollMonthNameOnly(gregorianYear, gregorianMonth, lang = "fa") {
+  const gy = Number(gregorianYear);
+  const gm = Number(gregorianMonth);
+  if (!gm || gm < 1 || gm > 12) return "—";
+  if (lang === "en") return MONTH_NAMES_EN[gm];
+  const { month: jm } = gregorianMonthYearToJalali(gy || 2000, gm);
+  return MONTH_NAMES_FA[jm];
+}
+
+/** Year number for UI from stored Gregorian payroll period. */
+export function payrollYearOnly(gregorianYear, gregorianMonth, lang = "fa") {
+  const gy = Number(gregorianYear);
+  const gm = Number(gregorianMonth) || 1;
+  if (!gy) return "—";
+  if (lang === "en") return gy;
+  return gregorianMonthYearToJalali(gy, gm).year;
+}

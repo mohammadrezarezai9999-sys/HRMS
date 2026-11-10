@@ -196,9 +196,9 @@ class PerformanceReviewSerializer(serializers.ModelSerializer):
             "period",
             "score",
             "comments",
-            "created_at",
+            
         ]
-        read_only_fields = ["created_at"]
+        
 
 
 class EmployeeDocumentSerializer(serializers.ModelSerializer):

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import "./EmployeePages.css";
 import { useLanguage } from "../../context/LanguageContext";
+import { payrollPeriodLabel } from "../../utils/date";
 
 export default function EmployeePayroll() {
   const { t, isRtl, formatDate, formatTime, statusLabel, lang } = useLanguage();
@@ -68,6 +69,7 @@ export default function EmployeePayroll() {
                                 <th>{t('baseSalary')}</th>
                                 <th>{t('overtimeHours')}</th>
                                 <th>{t('deduction')}</th>
+                                <th>{t('tax')}</th>
                                 <th>{t('netSalary')}</th>
                                 <th>{t('status')}</th>
                             </tr>
@@ -87,13 +89,16 @@ export default function EmployeePayroll() {
                             ) : (
                                 payrolls.map((item) => (
                                     <tr key={item.id}>
-                                        <td>{item.month || item.period || "-"}</td>
+                                        <td>{payrollPeriodLabel(item.year, item.month, lang)}</td>
                                         <td>{formatMoney(item.basic_salary || item.base_salary)}</td>
                                         <td className="salary-positive">
                                             {formatMoney(item.overtime_amount || item.overtime)}
                                         </td>
                                         <td className="salary-negative">
                                             {formatMoney(item.deduction || item.deductions)}
+                                        </td>
+                                        <td>
+                                            {formatMoney(item.tax || 0)}
                                         </td>
                                         <td className="salary-total">
                                             {formatMoney(item.net_salary || item.total_salary)}

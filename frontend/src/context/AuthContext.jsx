@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import api from '../api/axios';
+import { createContext, useContext, useEffect, useState } from "react";
+import api from "../api/axios";
 
 const AuthContext = createContext(null);
 
@@ -9,11 +9,11 @@ export function AuthProvider({ children }) {
 
   const loadUser = async () => {
     try {
-      const { data } = await api.get('me/');
+      const { data } = await api.get("me/");
       setUser(data);
       return data;
     } catch (error) {
-      console.error('Load user error:', error);
+      console.error("Load user error:", error);
       setUser(null);
       return null;
     } finally {
@@ -22,7 +22,7 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    if (localStorage.getItem('access')) {
+    if (localStorage.getItem("access")) {
       loadUser();
     } else {
       setIsLoading(false);
@@ -30,17 +30,27 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (username, password) => {
-    const { data } = await api.post('token/', { username, password });
-    localStorage.setItem('access', data.access);
-    localStorage.setItem('refresh', data.refresh);
+    const { data } = await api.post("token/", { username, password });
+    localStorage.setItem("access", data.access);
+    localStorage.setItem("refresh", data.refresh);
     const userData = await loadUser();
     return userData;
   };
 
-  const logout = () => {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
-    setUser(null);
+  const logout = async () => {
+    const refresh = localStorage.getItem("refresh");
+    try {
+      if (refresh) {
+        await api.post("logout/", { refresh });
+      }
+    } catch (error) {
+      // Still clear client session if server blacklist fails
+      console.error("Logout API error:", error);
+    } finally {
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      setUser(null);
+    }
   };
 
   return (

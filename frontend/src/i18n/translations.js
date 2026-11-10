@@ -1,5 +1,7 @@
 /**
- * UI dictionary — FA = Dari (Afghanistan), EN = English
+ * UI copy dictionary.
+ * fa = Dari (Afghanistan), en = English.
+ * Keys are shared; values are locale-specific.
  */
 const translations = {
   fa: {
@@ -16,7 +18,7 @@ const translations = {
     actions: "عملیات",
     status: "وضعیت",
     notFound: "۴۰۴ - صفحه پیدا نشد",
-    language: "زبان",
+    language: "زبان (دری)",
     refresh: "تازه کردن",
     close: "بستن",
     closeForm: "بستن فورم",
@@ -25,14 +27,14 @@ const translations = {
     yes: "بلی",
     no: "نخیر",
     noData: "معلوماتی یافت نشد",
-    errorGeneric: "خطایی رخ داد. دوباره کوشش کنید.",
+    errorGeneric: "خطایی رخ داد. لطفاً دوباره سعی کنید.",
     successGeneric: "عملیات با موفقیت انجام شد.",
     confirmDelete: "آیا از حذف این مورد مطمئن هستید؟",
     loginTitle: "ورود به سیستم HRMS",
     username: "نام کاربری",
     password: "رمز عبور",
     login: "ورود",
-    loginError: "نام کاربری یا رمز عبور اشتباه است",
+    loginError: "نام کاربری یا رمز عبور نادرست است.",
     adminPanel: "پنل مدیریت",
     employeePanel: "پنل کارمند",
     systemManagement: "مدیریت سیستم",
@@ -113,6 +115,7 @@ const translations = {
     year: "سال",
     bonus: "پاداش",
     deduction: "کسورات",
+    tax: "مالیات",
     netSalary: "معاش خالص",
     overtimePay: "فوق‌العاده",
     score: "امتیاز",
@@ -444,6 +447,7 @@ const translations = {
     year: "Year",
     bonus: "Bonus",
     deduction: "Deduction",
+    tax: "Tax",
     netSalary: "Net",
     overtimePay: "Overtime pay",
     score: "Score",

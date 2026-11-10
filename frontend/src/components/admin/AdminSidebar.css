@@ -1,3 +1,4 @@
+/* Admin sidebar, logo toggle, and responsive shell */
 /* =========================================================
    HRMS SIDEBAR - Strong Preview Edition
    هماهنگ با رنگ صفحه
@@ -17,10 +18,8 @@
     z-index: 1000;
     direction: rtl;
     border-left: 1px solid rgba(148, 183, 220, 0.12);
-    overflow: visible; /* مهم برای پیش‌نمایش */
 }
 
-/* نور ملایم هماهنگ با صفحه */
 .admin-sidebar::before {
     content: "";
     position: absolute;
@@ -127,7 +126,6 @@
     z-index: 1;
 }
 
-/* نوار کناری */
 .sidebar-link::before {
     content: "";
     position: absolute;
@@ -142,7 +140,6 @@
     box-shadow: 0 0 14px rgba(91, 163, 245, 0.7);
 }
 
-/* ========== HOVER اصلی ========== */
 .sidebar-link:hover {
     color: #ffffff;
     transform: translateX(-8px) scale(1.05);
@@ -157,7 +154,6 @@
     transform: translateY(-50%) scaleY(1);
 }
 
-/* ========== پیش‌نمایش صفحه (Preview Card) ========== */
 .sidebar-link .preview-card {
     position: absolute;
     left: calc(100% + 18px);
@@ -182,7 +178,6 @@
     transform: translateY(-50%) translateX(0) scale(1);
 }
 
-/* فلش کوچک پیش‌نمایش */
 .sidebar-link .preview-card::before {
     content: "";
     position: absolute;
@@ -196,7 +191,6 @@
     border-top: 1px solid rgba(0,0,0,0.06);
 }
 
-/* محتوای داخل پیش‌نمایش */
 .preview-card .preview-title {
     font-size: 13px;
     font-weight: 700;
@@ -317,41 +311,177 @@
     border-radius: 10px;
 }
 
+
 /* =========================================================
-   MAIN CONTENT
+   LAYOUT + TOGGLE + RESPONSIVE
 ========================================================= */
+
+.admin-layout {
+    min-height: 100vh;
+    background: #f0f4f9;
+}
+
+.sidebar-logo-btn {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    text-align: inherit;
+    font: inherit;
+    color: inherit;
+}
+
+.logo-icon {
+    cursor: pointer;
+    user-select: none;
+}
+
+.admin-sidebar {
+    transition: transform 0.28s ease, width 0.28s ease, box-shadow 0.28s ease;
+}
 
 .admin-main {
     margin-right: 278px;
     min-height: 100vh;
     background: #f0f4f9;
-    transition: margin-right 0.3s ease;
+    transition: margin 0.28s ease;
+    padding-bottom: 24px;
 }
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+html[dir="ltr"] .admin-sidebar {
+    right: auto;
+    left: 0;
+    border-left: none;
+    border-right: 1px solid rgba(148, 183, 220, 0.12);
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.4);
+}
+
+html[dir="ltr"] .admin-main {
+    margin-right: 0;
+    margin-left: 278px;
+}
+
+.admin-layout.sidebar-closed .admin-main {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.admin-layout.sidebar-closed.is-desktop .admin-sidebar {
+    transform: translateX(110%);
+}
+
+html[dir="ltr"] .admin-layout.sidebar-closed.is-desktop .admin-sidebar {
+    transform: translateX(-110%);
+}
+
+.admin-topbar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+
+.admin-layout.sidebar-closed .admin-topbar {
+    display: flex;
+}
+
+.sidebar-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.toggle-hr-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #4a90e2 0%, #2b6cb0 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 13px;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 14px rgba(43, 108, 176, 0.35);
+}
+
+.sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 900;
+    cursor: pointer;
+}
 
 @media (max-width: 900px) {
-    .admin-sidebar { width: 240px; }
-    .admin-main { margin-right: 240px; }
-    .sidebar-link .preview-card { display: none; }
-}
+    .admin-topbar {
+        display: flex;
+    }
 
-@media (max-width: 700px) {
-    .admin-sidebar { width: 74px; }
-    .admin-main { margin-right: 74px; }
+    .admin-main {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+        width: 100%;
+    }
 
-    .logo-text,
-    .sidebar-text,
-    .menu-title,
-    .sidebar-logout span:last-child,
+    .admin-sidebar {
+        width: min(300px, 86vw);
+        transform: translateX(110%);
+        z-index: 1000;
+    }
+
+    html[dir="ltr"] .admin-sidebar {
+        transform: translateX(-110%);
+    }
+
+    .admin-sidebar.is-open {
+        transform: translateX(0) !important;
+        box-shadow: -12px 0 40px rgba(0, 0, 0, 0.35);
+    }
+
+    html[dir="ltr"] .admin-sidebar.is-open {
+        box-shadow: 12px 0 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .admin-page {
+        padding: 16px !important;
+    }
+
+    .admin-card {
+        overflow-x: auto;
+    }
+
+    .admin-card table {
+        min-width: 640px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
     .sidebar-link .preview-card {
         display: none !important;
     }
+}
 
-    .sidebar-logo { justify-content: center; padding: 0; }
-    .sidebar-link { justify-content: center; padding: 0; }
-    .sidebar-link:hover { transform: scale(1.1); }
-    .sidebar-logout { justify-content: center; padding: 0; }
+@media (max-width: 480px) {
+    .admin-page {
+        padding: 12px !important;
+    }
+
+    .page-header h1 {
+        font-size: 22px !important;
+    }
 }
